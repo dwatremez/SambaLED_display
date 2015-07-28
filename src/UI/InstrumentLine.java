@@ -3,8 +3,7 @@ package UI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -50,9 +49,14 @@ public class InstrumentLine extends JPanel{
 		dim.height = 50;
 		this.setMinimumSize(dim);
 		this.add(lineLabel, BorderLayout.WEST);
+		
 		this.add(addButton, BorderLayout.EAST);
 		addButton.addActionListener(new AddListener());
-
+		addButton.setBackground(backColor);
+		addButton.setBorderPainted(false);
+		Font myFont = new Font("Tahoma", Font.PLAIN, 26);
+		addButton.setFont(myFont);
+		addButton.setFocusPainted(false);
 		
 		instrumentsPanel.setLayout(new GridBagLayout());
 		this.add(instrumentsPanel, BorderLayout.CENTER);
