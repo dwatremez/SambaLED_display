@@ -18,12 +18,12 @@ public class InstrumentLine extends JPanel{
 	
 	private Dimension dim = new Dimension();
 
-	private ArrayList<JPanel> instruments = new ArrayList<>();
+	private ArrayList<InstrumentItem> instruments = new ArrayList<>();
 	private JPanel instrumentsPanel = new JPanel();
     GridBagConstraints gbc = new GridBagConstraints();
 	
 	private JButton addButton = new JButton("+"); 	
-	private JButton but = new JButton("test"); 
+	private JButton testButton = new JButton("test"); 
 
 	private JLabel lineLabel = new JLabel("New Line");
     
@@ -79,6 +79,8 @@ public class InstrumentLine extends JPanel{
 			gbc.weighty = 0.5;
 			instrumentsPanel.add(instruments.get(i), gbc);
 		}
+		instrumentsPanel.add(testButton);
+		testButton.addActionListener(new ButListener());
 		this.revalidate();
 	}
 
@@ -90,6 +92,15 @@ public class InstrumentLine extends JPanel{
 			// TODO Auto-generated method stub
 			InstrumentItem iI = new InstrumentItem();
 			addInstrument(iI);
+		}		
+	}
+	
+	class ButListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			instruments.get(0).setParameters("Chocalho");
 		}		
 	}
 
