@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 public class InstrumentPanel extends JPanel {
 
 	private JLabel linesLabel = new JLabel("Lines");
+	
 	private JButton addLineButton = new JButton("Add new line"); 
 	
 	private JPanel linesPanel = new JPanel();
@@ -41,7 +42,7 @@ public class InstrumentPanel extends JPanel {
 
 	public void addLine()
 	{
-		InstrumentLine iL = new InstrumentLine(lines.size());
+		InstrumentLine iL = new InstrumentLine(lines.size() + 1);
 		lines.add(iL);
 		linesLabel.setText(lines.size() + " Lines");
 		for(int i =0; i<lines.size(); i++)
@@ -53,7 +54,7 @@ public class InstrumentPanel extends JPanel {
 		    gbc.gridwidth = GridBagConstraints.REMAINDER;
 			linesPanel.add(lines.get(i), gbc);
 		}
-		this.repaint();
+		this.revalidate();
 	}
 	
 	
