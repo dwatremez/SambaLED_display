@@ -1,6 +1,7 @@
 package UI;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -39,6 +40,9 @@ public class MainWindow extends JFrame {
 		
 		instPanel.addLine(0);
 		instPanel.addLine(0);
+		
+
+        setMinimumSize(new Dimension(1300,500));
 		
 		this.setContentPane(mainContainer);
 		this.setVisible(true); 
