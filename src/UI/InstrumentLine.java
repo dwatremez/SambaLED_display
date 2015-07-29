@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -68,10 +69,31 @@ public class InstrumentLine extends JPanel{
 			this.getComponent(i).setBackground(backColor);
 		}
 	}
-
-	public void addInstrument(InstrumentItem iI)
+	
+	public void addInstrument(InstrumentItem iI, Point p)
 	{
-		instruments.add(iI);
+		if(p!=null)
+		{
+			if(!instruments.isEmpty())
+			{
+				int pos = 0;
+				while(true)
+				{
+					if(p.getX() < instrumentsPanel.getSize().getWidth() / (2 * instruments.size()) * (1 + 2*pos))
+					{
+						instruments.add(pos, iI);
+						break;
+					}
+					else
+						pos++;
+					
+				}				
+			}
+			else
+				instruments.add(iI);				
+		}
+		else
+			instruments.add(iI);
 		for(int i =0; i<instruments.size(); i++)
 		{
 			gbc.fill = GridBagConstraints.BOTH;
@@ -82,6 +104,11 @@ public class InstrumentLine extends JPanel{
 			instrumentsPanel.add(instruments.get(i), gbc);
 		}
 		this.revalidate();
+	}
+
+	public void addInstrument(InstrumentItem iI)
+	{
+		addInstrument(iI, null);
 	}
 
 

@@ -196,7 +196,7 @@ public class InstrumentPanel extends JPanel {
 					DragSource ds = new DragSource();
 					ds.createDefaultDragGestureRecognizer(myItem,
 							DnDConstants.ACTION_MOVE, new DragGestureListImp());	
-					((InstrumentLine)this.panel).addInstrument(myItem);
+					((InstrumentLine)this.panel).addInstrument(myItem, event.getLocation());
 					event.dropComplete(true);
 					this.panel.validate();
 					return;
