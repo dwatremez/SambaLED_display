@@ -59,7 +59,7 @@ public class InstrumentPanel extends JPanel {
 		{
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.gridx = 0;
-			gbc.gridy = i;
+			gbc.gridy = lines.size() - 1 - i;
 			gbc.weightx = 1.0;
 		    gbc.gridwidth = GridBagConstraints.REMAINDER;
 			linesPanel.add(lines.get(i), gbc);
