@@ -96,7 +96,7 @@ public class InstrumentItem extends JLabel{
 
 
 	public void paintComponent(Graphics g) {
-		//g.setColor(Color.gray);
+		//g.setColor(Color.DARK_GRAY);
 		//g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(instrumentColor);
 		g.drawString(this.type, this.getWidth()/2 - g.getFontMetrics().stringWidth(this.type)/2,g.getFontMetrics().getAscent());
