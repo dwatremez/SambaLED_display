@@ -13,9 +13,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 public class InstrumentLine extends JPanel{	
 
@@ -26,8 +28,17 @@ public class InstrumentLine extends JPanel{
 	GridBagConstraints gbc = new GridBagConstraints();
 
 	private JLabel lineLabel = new JLabel("New Line");
+	
+	private JPopupMenu jpm  = new JPopupMenu();
+	//private JMenu background = new JMenu("Couleur du fond");
+	//private JMenu couleur = new JMenu("Couleur de la forme");
+
+	private JMenuItem deleteMenuItem = new JMenuItem("Delete instrument");
+	private JMenuItem renameMenuItem = new JMenuItem("Rename player");
 
 	private Color backColor = Color.GRAY;
+	
+	private InstrumentItem iSelected;
 
 
 	public InstrumentLine()
@@ -52,7 +63,10 @@ public class InstrumentLine extends JPanel{
 		this.add(lineLabel, BorderLayout.WEST);
 
 		instrumentsPanel.setLayout(new GridBagLayout());
-		this.add(instrumentsPanel, BorderLayout.CENTER);
+		this.add(instrumentsPanel, BorderLayout.CENTER);		
+
+		deleteMenuItem.addActionListener(new DeleteListener());
+		renameMenuItem.addActionListener(new RenameListener());
 
 		// Set every background the same color
 		for (int i = 0; i < this.getComponentCount(); i++) {
@@ -79,22 +93,30 @@ public class InstrumentLine extends JPanel{
 		else
 			instruments.add(iI);
 		
-
-		iI.addMouseListener(new MouseAdapter(){
-			public void mouseReleased(MouseEvent e){
-				if(e.isPopupTrigger())
-				{
-					instruments.remove((InstrumentItem)e.getComponent());
-					updateDisplay();
-				}
-			}
-		});
+		this.mouseMenu(iI);
 		this.updateDisplay();
 	}
 
 	public void addInstrument(InstrumentItem iI)
 	{
 		addInstrument(iI, null);
+	}
+	
+	private void mouseMenu(InstrumentItem iI)
+	{
+		iI.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e){
+				if(e.isPopupTrigger())
+				{
+					iSelected = iI;
+					jpm.add(deleteMenuItem);
+					jpm.add(renameMenuItem);
+					
+					jpm.show(iI, e.getX(), e.getY());
+				}
+			}
+		});
+		
 	}
 
 	public void updateDisplay()
@@ -114,14 +136,28 @@ public class InstrumentLine extends JPanel{
 	}
 
 
-	class InstrumentListener implements ActionListener
+	class DeleteListener implements ActionListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			
+			instruments.remove(iSelected);
+			updateDisplay();	
 		}		
 	}
+	
+	class RenameListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+		    String name = JOptionPane.showInputDialog(null, "Name", "Player's name", JOptionPane.QUESTION_MESSAGE);
+			iSelected.setTypeText(name);
+			updateDisplay();
+		}		
+	}	
+
 
 
 }

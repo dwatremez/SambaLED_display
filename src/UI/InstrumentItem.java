@@ -88,8 +88,9 @@ public class InstrumentItem extends JLabel{
 		this.revalidate();
 	}
 	
-	public void setTypeText()
+	public void setTypeText(String t)
 	{
+		this.type = t;
 		this.setText(type);
 	}
 
