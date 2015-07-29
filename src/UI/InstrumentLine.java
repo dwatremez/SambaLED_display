@@ -15,34 +15,34 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class InstrumentLine extends JPanel{	
-	
+
 	private Dimension dim = new Dimension();
 
 	private ArrayList<InstrumentItem> instruments = new ArrayList<>();
 	private JPanel instrumentsPanel = new JPanel();
-    GridBagConstraints gbc = new GridBagConstraints();
-	
+	GridBagConstraints gbc = new GridBagConstraints();
+
 	private JButton addButton = new JButton("+"); 	
 	private JButton testButton = new JButton("change"); 
 
 	private JLabel lineLabel = new JLabel("New Line");
-    
+
 	private Color backColor = Color.GRAY;
-	
+
 
 	public InstrumentLine()
 	{	
 		initObject();
 	}
-	
-	
+
+
 	public InstrumentLine(int i)
 	{
 		initObject();
 		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		lineLabel.setText(String.valueOf(i));
 	}
-	
+
 	private void initObject()
 	{
 		this.setBackground(backColor);		
@@ -50,25 +50,25 @@ public class InstrumentLine extends JPanel{
 		dim.height = 50;
 		this.setMinimumSize(dim);
 		this.add(lineLabel, BorderLayout.WEST);
-		
+
 		addButton.addActionListener(new AddListener());
 		addButton.setBackground(backColor);
 		addButton.setBorderPainted(false);
 		addButton.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		addButton.setFocusPainted(false);
 		addButton.setOpaque(false);
-		
-		this.add(addButton, BorderLayout.EAST);
-		
+
+		//this.add(addButton, BorderLayout.EAST);
+
 		instrumentsPanel.setLayout(new GridBagLayout());
 		this.add(instrumentsPanel, BorderLayout.CENTER);
-		
+
 		// Set every background the same color
 		for (int i = 0; i < this.getComponentCount(); i++) {
-            this.getComponent(i).setBackground(backColor);
-        }
+			this.getComponent(i).setBackground(backColor);
+		}
 	}
-	
+
 	public void addInstrument(InstrumentItem iI)
 	{
 		instruments.add(iI);
@@ -84,7 +84,7 @@ public class InstrumentLine extends JPanel{
 		this.revalidate();
 	}
 
-	  
+
 	class AddListener implements ActionListener
 	{
 		@Override
@@ -94,7 +94,7 @@ public class InstrumentLine extends JPanel{
 			addInstrument(iI);
 		}		
 	}
-	
+
 	class ButListener implements ActionListener
 	{
 		@Override

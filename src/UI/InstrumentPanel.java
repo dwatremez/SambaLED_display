@@ -2,19 +2,32 @@ package UI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.TransferHandler;
 
 public class InstrumentPanel extends JPanel {
 
@@ -51,7 +64,7 @@ public class InstrumentPanel extends JPanel {
 	    linesPanel.add(addBottomLineButton, BorderLayout.SOUTH);
 	    
 	    configureInstrumentExamples();
-	    
+			    
 	    this.add(linesPanel, BorderLayout.CENTER);
 	    this.add(instrumentItemPanel, BorderLayout.SOUTH);
 	}
@@ -88,16 +101,26 @@ public class InstrumentPanel extends JPanel {
 			gbc.gridx = i;
 			gbc.gridy = 0;
 			gbc.weightx = 1.0;
+			setDnD(instrumentExamples.get(i));
 			instrumentItemPanel.add(instrumentExamples.get(i), gbc);
-		}
+		}		
 		
-		
+
+
+	}
+	
+	private void setDnD(InstrumentItem i)
+	{			
+		DragSource ds = new DragSource();
+		ds.createDefaultDragGestureRecognizer(i,
+				DnDConstants.ACTION_COPY, new DragGestureListImp());		
 	}
 
 
 	public void addLine(int pos)
 	{
 		InstrumentLine iL = new InstrumentLine(lines.size() + 1);
+		new MyDropTargetListImp(iL); // Add to DropList
 		if(pos == 1)
 			lines.add(iL);
 		else
@@ -134,6 +157,84 @@ public class InstrumentPanel extends JPanel {
 				addLine(1);
 		}		
 	}
+	
+	class DragGestureListImp implements DragGestureListener {
+
+		@Override
+		public void dragGestureRecognized(DragGestureEvent event) {
+			Cursor cursor = null;
+			InstrumentItem myItem = (InstrumentItem) event.getComponent();
+
+			if (event.getDragAction() == DnDConstants.ACTION_COPY) {
+				cursor = DragSource.DefaultCopyDrop;
+			}
+
+			event.startDrag(cursor, new TransferableInstrument(myItem));
+		}
+	}
+
+	class MyDropTargetListImp extends DropTargetAdapter implements
+			DropTargetListener {
+
+		private DropTarget dropTarget;
+		private JPanel panel;
+
+		public MyDropTargetListImp(JPanel panel) {
+			this.panel = panel;
+
+			dropTarget = new DropTarget(panel, DnDConstants.ACTION_COPY, this,
+					true, null);
+		}
+
+		public void drop(DropTargetDropEvent event) {
+			try {
+				Transferable tr = event.getTransferable();
+				InstrumentItem myItem = (InstrumentItem) tr.getTransferData(TransferableInstrument.instrumentFlavor);
+
+				if (event.isDataFlavorSupported(TransferableInstrument.instrumentFlavor)) {
+					event.acceptDrop(DnDConstants.ACTION_COPY);
+					DragSource ds = new DragSource();
+					ds.createDefaultDragGestureRecognizer(myItem,
+							DnDConstants.ACTION_MOVE, new DragGestureListImp());	
+					((InstrumentLine)this.panel).addInstrument(myItem);
+					event.dropComplete(true);
+					this.panel.validate();
+					return;
+				}
+				event.rejectDrop();
+			} catch (Exception e) {
+				e.printStackTrace();
+				event.rejectDrop();
+			}
+		}
+	}
+	
+		
+	static class TransferableInstrument implements Transferable {
+		  protected static DataFlavor instrumentFlavor = new DataFlavor(InstrumentItem.class, InstrumentItem.class.getSimpleName());
+		  protected static DataFlavor[] supportedFlavors = { instrumentFlavor };
+		  InstrumentItem myItem;
+		  public TransferableInstrument(InstrumentItem item) {
+		    this.myItem = item;
+		  }
+
+		  public DataFlavor[] getTransferDataFlavors() {
+		    return supportedFlavors;
+		  }
+
+		  public boolean isDataFlavorSupported(DataFlavor flavor) {
+		    if (flavor.equals(instrumentFlavor))
+		      return true;
+		    return false;
+		  }
+
+		  public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+		    if (flavor.equals(instrumentFlavor))
+		      return myItem;
+		    else
+		      throw new UnsupportedFlavorException(flavor);
+		  }
+		}
 }
 
 

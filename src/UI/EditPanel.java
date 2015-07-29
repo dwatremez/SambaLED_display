@@ -42,7 +42,6 @@ public class EditPanel extends JPanel {
 		
 		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
-		//scrollPanel.getVerticalScrollBar().setVisible(false);
 		this.add(scrollPanel, BorderLayout.CENTER);
 
 		optionButtons.setLayout(new GridBagLayout());

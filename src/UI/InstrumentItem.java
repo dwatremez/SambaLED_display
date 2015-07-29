@@ -5,9 +5,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 
-public class InstrumentItem extends JPanel{
+public class InstrumentItem extends JLabel{
 
 	private String type = "Caixa";
 	private String shape = "Circle";
@@ -30,12 +30,18 @@ public class InstrumentItem extends JPanel{
 		setParameters(type, pixelNb);
 	}
 
+	private void init()
+	{
+		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));			
+	}
+
 
 	public void setParameters(String pType)
 	{
 		this.setParameters(pType,  0);
 	}
 
+	
 	public void setParameters(String pType, int pPixelNb)
 	{
 		this.type = pType;
@@ -81,11 +87,12 @@ public class InstrumentItem extends JPanel{
 		
 		this.revalidate();
 	}
-
-	private void init()
+	
+	public void setTypeText()
 	{
-		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));			
+		this.setText(type);
 	}
+
 
 	public void paintComponent(Graphics g) {
 		//g.setColor(Color.gray);
