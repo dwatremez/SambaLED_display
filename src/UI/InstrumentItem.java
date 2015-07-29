@@ -22,6 +22,13 @@ public class InstrumentItem extends JPanel{
 	{	
 		init();
 	}
+	
+
+	public InstrumentItem(String type, int pixelNb)
+	{
+		init();
+		setParameters(type, pixelNb);
+	}
 
 
 	public void setParameters(String pType)
@@ -41,34 +48,30 @@ public class InstrumentItem extends JPanel{
 		case "Surdo 3":
 			this.shape = "Circle";
 			this.pixelNb = 42;
-			this.size = 100;
+			this.size = (int)(1.5*size);
 			break;
 		case "Caixa":
 		case "Repique":
 		case "Tarol":
 			this.shape = "Circle";
 			this.pixelNb = 28;
-			this.size = 60;
 			break;				
 		case "Tamborim":
 			this.shape = "Circle";
 			this.pixelNb = 13;
-			this.size = 30;
+			this.size = (int)(0.5*size);
 			break;
 		case "Agogo":
 			this.shape = "3Bar";
 			this.pixelNb = 15;
-			this.size = 50;
 			break;
 		case "Chocalho":
 			this.shape = "Bar";
 			this.pixelNb = 7;
-			this.size = 50;
 			break;
 		case "Cuica":
 			this.shape = "Circle";
 			this.pixelNb = 28;
-			this.size = 60;
 			break;
 		default:		
 		}
@@ -81,25 +84,26 @@ public class InstrumentItem extends JPanel{
 
 	private void init()
 	{
-		this.setPreferredSize(new Dimension(size*2,size));			
+		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));			
 	}
 
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.gray);
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		//g.setColor(Color.gray);
+		//g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(instrumentColor);
+		g.drawString(this.type, this.getWidth()/2 - g.getFontMetrics().stringWidth(this.type)/2,g.getFontMetrics().getAscent());
 		switch(shape)
 		{
 		case "Circle":
-			g.fillOval(this.getWidth()/2 - size/4, this.getHeight()/2 - size/4, size/2, size/2);
+			g.fillOval((int)(this.getWidth()/2.0 - size/4.0),(int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/2.0),(int)(size/2.0));
 			break;
 		case "Bar":
-			g.fillRect(this.getWidth()/2 - size/2, this.getHeight()/2 - size/8, 2*size, size/4);
+			g.fillRect((int)(this.getWidth()/2.0 - size/3.0),(int)(this.getHeight()/2.0 - size/8.0) + g.getFontMetrics().getAscent()/2, (int)(2.0/3.0*size),(int)(size/4.0));
 			break;	
 		case "3Bar":
-			g.fillRect((int)((this.getWidth()/2 - size/8) - size/3), this.getHeight()/2 - size/4, size/4, size/2);
-			g.fillRect((this.getWidth()/2 - size/8), this.getHeight()/2 - size/4, size/4, size/2);
-			g.fillRect((int)((this.getWidth()/2 - size/8) + size /3), this.getHeight()/2 - size/4, size/4, size/2);
+			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) - size/3.0), (int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/4.0),(int)(size/2.0));
+			g.fillRect((int)((this.getWidth()/2.0 - size/8.0)),(int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/4.0),(int)(size/2.0));
+			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) + size /3.0),(int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/4.0),(int)(size/2.0));
 			break;					
 		default:
 

@@ -18,14 +18,18 @@ import javax.swing.JScrollPane;
 
 public class InstrumentPanel extends JPanel {
 
+	private JPanel linesPanel = new JPanel();
 	
 	private JButton addBottomLineButton = new JButton("Add new line"); 
 	private JButton addTopLineButton = new JButton("Add new line"); 
 	
-	private JPanel linesPanel = new JPanel();
-	private JScrollPane scrollPanel = new JScrollPane(linesPanel);	
+	private JPanel instrumentLinesPanel = new JPanel();
+	private JScrollPane scrollPanel = new JScrollPane(instrumentLinesPanel);	
 	private ArrayList<JPanel> lines = new ArrayList<>();
     GridBagConstraints gbc = new GridBagConstraints();
+    
+    private JPanel instrumentItemPanel = new JPanel();
+    private ArrayList<InstrumentItem> instrumentExamples = new ArrayList<>();
     
 	private Color backColor = Color.decode("#EEEEEE");
 	
@@ -33,17 +37,23 @@ public class InstrumentPanel extends JPanel {
 	{
 		this.setLayout(new BorderLayout());
 		this.setBackground(backColor);
-		linesPanel.setLayout(new GridBagLayout());
+		linesPanel.setLayout(new BorderLayout());
+		instrumentLinesPanel.setLayout(new GridBagLayout());
 
 		configureNewLineButton(addBottomLineButton);
 		configureNewLineButton(addTopLineButton);
 		
-		linesPanel.setBackground(backColor);
+		instrumentLinesPanel.setBackground(backColor);
 	    scrollPanel.setBorder(BorderFactory.createEmptyBorder());
 		
-	    this.add(addTopLineButton, BorderLayout.NORTH);
-		this.add(scrollPanel, BorderLayout.CENTER);
-		this.add(addBottomLineButton, BorderLayout.SOUTH);
+	    linesPanel.add(addTopLineButton, BorderLayout.NORTH);
+	    linesPanel.add(scrollPanel, BorderLayout.CENTER);
+	    linesPanel.add(addBottomLineButton, BorderLayout.SOUTH);
+	    
+	    configureInstrumentExamples();
+	    
+	    this.add(linesPanel, BorderLayout.CENTER);
+	    this.add(instrumentItemPanel, BorderLayout.SOUTH);
 	}
 	
 	private void configureNewLineButton(JButton but)
@@ -53,6 +63,35 @@ public class InstrumentPanel extends JPanel {
 		but.setBorderPainted(false);
 		but.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		but.setFocusPainted(false);
+	}
+	
+	private void configureInstrumentExamples()
+	{
+		instrumentItemPanel.setBackground(Color.gray);
+		instrumentItemPanel.setLayout(new GridBagLayout());
+		
+		instrumentExamples.add(new InstrumentItem("Surdo 1", 42));
+		instrumentExamples.add(new InstrumentItem("Surdo 2", 42));
+		instrumentExamples.add(new InstrumentItem("Surdo 3", 42));
+		instrumentExamples.add(new InstrumentItem("Repique", 28));
+		instrumentExamples.add(new InstrumentItem("Caixa", 28));
+		instrumentExamples.add(new InstrumentItem("Tarol", 28));
+		instrumentExamples.add(new InstrumentItem("Agogo", 10));
+		instrumentExamples.add(new InstrumentItem("Tamborim", 13));
+		instrumentExamples.add(new InstrumentItem("Chocalho", 7));
+		instrumentExamples.add(new InstrumentItem("Cuica", 28));
+		instrumentExamples.add(new InstrumentItem("Balloon", 28));
+
+		for(int i = 0; i<instrumentExamples.size(); i++)
+		{
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.gridx = i;
+			gbc.gridy = 0;
+			gbc.weightx = 1.0;
+			instrumentItemPanel.add(instrumentExamples.get(i), gbc);
+		}
+		
+		
 	}
 
 
@@ -76,7 +115,7 @@ public class InstrumentPanel extends JPanel {
 			gbc.weightx = 1.0;
 		    gbc.gridwidth = GridBagConstraints.REMAINDER;
 		    gbc.insets = new Insets( 0, 0, 20, 0 );
-			linesPanel.add(lines.get(i), gbc);
+			instrumentLinesPanel.add(lines.get(i), gbc);
 		}
 		this.revalidate();
 	}
