@@ -39,8 +39,7 @@ public class RemotePanel extends JPanel{
 			else
 				but.setBackground(keyRed);
 			but.setBorderPainted(false);
-			Font myFont = new Font("Tahoma", Font.PLAIN, 40);
-			but.setFont(myFont);
+			but.setFont(new Font("Tahoma", Font.PLAIN, 40));
 			but.setFocusPainted(false);
 
 			keyPad.add(but);
@@ -52,10 +51,9 @@ public class RemotePanel extends JPanel{
 			this.add(keyPad.get(i), gbc);
 		}
 
-		Font myFont = new Font("Tahoma", Font.PLAIN, 40);
 
 		triggerButton.addActionListener(new TriggerListener());
-		triggerButton.setFont(myFont);
+		triggerButton.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		triggerButton.setBorderPainted(false);
 		triggerButton.setFocusPainted(false);
 		triggerButton.setBackground(keyGreen);
@@ -66,7 +64,7 @@ public class RemotePanel extends JPanel{
 		this.add(triggerButton, gbc);
 
 		modeButton.addActionListener(new ModeListener());
-		modeButton.setFont(myFont);
+		modeButton.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		modeButton.setBorderPainted(false);
 		modeButton.setFocusPainted(false);
 		modeButton.setBackground(keyGreen);

@@ -23,7 +23,7 @@ public class InstrumentLine extends JPanel{
     GridBagConstraints gbc = new GridBagConstraints();
 	
 	private JButton addButton = new JButton("+"); 	
-	private JButton testButton = new JButton("test"); 
+	private JButton testButton = new JButton("change"); 
 
 	private JLabel lineLabel = new JLabel("New Line");
     
@@ -39,7 +39,8 @@ public class InstrumentLine extends JPanel{
 	public InstrumentLine(int i)
 	{
 		initObject();
-		lineLabel.setText("Line " + i);
+		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		lineLabel.setText(String.valueOf(i));
 	}
 	
 	private void initObject()
@@ -50,13 +51,14 @@ public class InstrumentLine extends JPanel{
 		this.setMinimumSize(dim);
 		this.add(lineLabel, BorderLayout.WEST);
 		
-		this.add(addButton, BorderLayout.EAST);
 		addButton.addActionListener(new AddListener());
 		addButton.setBackground(backColor);
 		addButton.setBorderPainted(false);
-		Font myFont = new Font("Tahoma", Font.PLAIN, 26);
-		addButton.setFont(myFont);
+		addButton.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		addButton.setFocusPainted(false);
+		addButton.setOpaque(false);
+		
+		this.add(addButton, BorderLayout.EAST);
 		
 		instrumentsPanel.setLayout(new GridBagLayout());
 		this.add(instrumentsPanel, BorderLayout.CENTER);
