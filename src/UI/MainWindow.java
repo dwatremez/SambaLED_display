@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 public class MainWindow extends JFrame {
 	
@@ -16,6 +17,7 @@ public class MainWindow extends JFrame {
 		this.setSize(1500, 800);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
+		
 		
 		mainContainer.setLayout(new BorderLayout());		
 		

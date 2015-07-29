@@ -26,7 +26,7 @@ public class InstrumentPanel extends JPanel {
 	private ArrayList<JPanel> lines = new ArrayList<>();
     GridBagConstraints gbc = new GridBagConstraints();
     
-	private Color backColor = Color.WHITE;
+	private Color backColor = Color.decode("#EEEEEE");
 	
 	public InstrumentPanel()
 	{
