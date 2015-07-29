@@ -81,8 +81,6 @@ public class InstrumentLine extends JPanel{
 			gbc.weighty = 0.5;
 			instrumentsPanel.add(instruments.get(i), gbc);
 		}
-		instrumentsPanel.add(testButton);
-		testButton.addActionListener(new ButListener());
 		this.revalidate();
 	}
 

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import javax.swing.JScrollPane;
 
 public class InstrumentPanel extends JPanel {
 
-	private JLabel linesLabel = new JLabel("Lines");
 	
-	private JButton addLineButton = new JButton("Add new line"); 
+	private JButton addBottomLineButton = new JButton("Add new line"); 
+	private JButton addTopLineButton = new JButton("Add new line"); 
 	
 	private JPanel linesPanel = new JPanel();
 	private JScrollPane scrollPanel = new JScrollPane(linesPanel);	
@@ -34,27 +35,39 @@ public class InstrumentPanel extends JPanel {
 		this.setBackground(backColor);
 		linesPanel.setLayout(new GridBagLayout());
 
-		addLineButton.addActionListener(new AddLineListener());
-		addLineButton.setBackground(Color.LIGHT_GRAY);
-		addLineButton.setBorderPainted(false);
-		Font myFont = new Font("Tahoma", Font.PLAIN, 26);
-		addLineButton.setFont(myFont);
-		addLineButton.setFocusPainted(false);
+		configureNewLineButton(addBottomLineButton);
+		configureNewLineButton(addTopLineButton);
 		
 		linesPanel.setBackground(backColor);
 	    scrollPanel.setBorder(BorderFactory.createEmptyBorder());
 		
-		this.add(linesLabel, BorderLayout.NORTH);
+	    this.add(addTopLineButton, BorderLayout.NORTH);
 		this.add(scrollPanel, BorderLayout.CENTER);
-		this.add(addLineButton, BorderLayout.SOUTH);
+		this.add(addBottomLineButton, BorderLayout.SOUTH);
+	}
+	
+	private void configureNewLineButton(JButton but)
+	{
+		but.addActionListener(new AddLineListener());
+		but.setBackground(backColor);
+		but.setBorderPainted(false);
+		but.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		but.setFocusPainted(false);
 	}
 
 
-	public void addLine()
+	public void addLine(int pos)
 	{
 		InstrumentLine iL = new InstrumentLine(lines.size() + 1);
-		lines.add(iL);
-		linesLabel.setText(lines.size() + " Lines");
+		if(pos == 1)
+			lines.add(iL);
+		else
+			lines.add(0, iL);
+		updateLinesDisplay();
+	}
+	
+	public void updateLinesDisplay()
+	{
 		for(int i =0; i<lines.size(); i++)
 		{
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -62,6 +75,7 @@ public class InstrumentPanel extends JPanel {
 			gbc.gridy = lines.size() - 1 - i;
 			gbc.weightx = 1.0;
 		    gbc.gridwidth = GridBagConstraints.REMAINDER;
+		    gbc.insets = new Insets( 0, 0, 20, 0 );
 			linesPanel.add(lines.get(i), gbc);
 		}
 		this.revalidate();
@@ -74,7 +88,11 @@ public class InstrumentPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
-			addLine();		
+			JButton but = ((JButton)arg0.getSource());
+			if(but == addBottomLineButton)
+				addLine(0);		
+			else
+				addLine(1);
 		}		
 	}
 }
