@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -22,9 +24,6 @@ public class InstrumentLine extends JPanel{
 	private ArrayList<InstrumentItem> instruments = new ArrayList<>();
 	private JPanel instrumentsPanel = new JPanel();
 	GridBagConstraints gbc = new GridBagConstraints();
-
-	private JButton addButton = new JButton("+"); 	
-	private JButton testButton = new JButton("change"); 
 
 	private JLabel lineLabel = new JLabel("New Line");
 
@@ -52,15 +51,6 @@ public class InstrumentLine extends JPanel{
 		this.setMinimumSize(dim);
 		this.add(lineLabel, BorderLayout.WEST);
 
-		addButton.addActionListener(new AddListener());
-		addButton.setBackground(backColor);
-		addButton.setBorderPainted(false);
-		addButton.setFont(new Font("Tahoma", Font.PLAIN, 26));
-		addButton.setFocusPainted(false);
-		addButton.setOpaque(false);
-
-		//this.add(addButton, BorderLayout.EAST);
-
 		instrumentsPanel.setLayout(new GridBagLayout());
 		this.add(instrumentsPanel, BorderLayout.CENTER);
 
@@ -69,31 +59,47 @@ public class InstrumentLine extends JPanel{
 			this.getComponent(i).setBackground(backColor);
 		}
 	}
-	
+
 	public void addInstrument(InstrumentItem iI, Point p)
 	{
-		if(p!=null)
+		if(p!=null && !instruments.isEmpty())
 		{
-			if(!instruments.isEmpty())
+			int pos = 0;
+			while(true)
 			{
-				int pos = 0;
-				while(true)
+				if(p.getX() < instrumentsPanel.getSize().getWidth() / (2 * instruments.size()) * (1 + 2*pos))
 				{
-					if(p.getX() < instrumentsPanel.getSize().getWidth() / (2 * instruments.size()) * (1 + 2*pos))
-					{
-						instruments.add(pos, iI);
-						break;
-					}
-					else
-						pos++;
-					
-				}				
-			}
-			else
-				instruments.add(iI);				
+					instruments.add(pos, iI);
+					break;
+				}
+				else
+					pos++;					
+			}								
 		}
 		else
 			instruments.add(iI);
+		
+
+		iI.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e){
+				if(e.isPopupTrigger())
+				{
+					instruments.remove((InstrumentItem)e.getComponent());
+					updateDisplay();
+				}
+			}
+		});
+		this.updateDisplay();
+	}
+
+	public void addInstrument(InstrumentItem iI)
+	{
+		addInstrument(iI, null);
+	}
+
+	public void updateDisplay()
+	{		
+		instrumentsPanel.removeAll();
 		for(int i =0; i<instruments.size(); i++)
 		{
 			gbc.fill = GridBagConstraints.BOTH;
@@ -104,31 +110,18 @@ public class InstrumentLine extends JPanel{
 			instrumentsPanel.add(instruments.get(i), gbc);
 		}
 		this.revalidate();
-	}
 
-	public void addInstrument(InstrumentItem iI)
-	{
-		addInstrument(iI, null);
 	}
 
 
-	class AddListener implements ActionListener
+	class InstrumentListener implements ActionListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
-			InstrumentItem iI = new InstrumentItem();
-			addInstrument(iI);
+			
 		}		
 	}
 
-	class ButListener implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-			instruments.get(0).setParameters("Chocalho");
-		}		
-	}
 
 }
