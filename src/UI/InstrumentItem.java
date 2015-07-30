@@ -2,6 +2,7 @@ package UI;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -9,10 +10,11 @@ import javax.swing.JLabel;
 
 public class InstrumentItem extends JLabel{
 
+	private String name = "Luc";
 	private String type = "Caixa";
 	private String shape = "Circle";
 	private int pixelNb = 28;
-	private int size = 60;
+	private int size = 70;
 
 	private ArrayList<Color> pixelColor = new ArrayList<>();
 
@@ -28,6 +30,12 @@ public class InstrumentItem extends JLabel{
 	{
 		init();
 		setParameters(type, pixelNb);
+	}	
+	
+	public InstrumentItem(String name, String type, String shape, int pixelNb)
+	{
+		init();
+		setParameters(name, type, shape, pixelNb);
 	}
 
 	private void init()
@@ -41,10 +49,19 @@ public class InstrumentItem extends JLabel{
 		this.setParameters(pType,  0);
 	}
 
+	public void setParameters(String name, String type, String shape, int pixelNb)
+	{
+		this.name = name;
+		this.type = type;
+		this.shape = shape;
+		this.pixelNb = pixelNb;
+		this.repaint();
+	}
 	
 	public void setParameters(String pType, int pPixelNb)
 	{
-		setTypeText(pType);
+		this.type = pType;
+		this.name = pType;
 		this.pixelNb = pPixelNb;
 		
 		switch(pType)
@@ -68,7 +85,7 @@ public class InstrumentItem extends JLabel{
 			this.size = (int)(0.5*size);
 			break;
 		case "Agogo":
-			this.shape = "3Bar";
+			this.shape = "Triple Bar";
 			this.pixelNb = 15;
 			break;
 		case "Chocalho":
@@ -87,35 +104,74 @@ public class InstrumentItem extends JLabel{
 		
 		this.revalidate();
 	}
-	
-	public void setTypeText(String t)
-	{
-		this.type = t;
-		this.setText(type);
-	}
-
 
 	public void paintComponent(Graphics g) {
 		//g.setColor(Color.DARK_GRAY);
 		//g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(instrumentColor);
-		g.drawString(this.type, this.getWidth()/2 - g.getFontMetrics().stringWidth(this.type)/2,g.getFontMetrics().getAscent());
+		Font nameFont = new Font("Tahoma", Font.PLAIN, 12);
+		g.setFont(nameFont);
+		g.drawString(this.name, this.getWidth()/2 - g.getFontMetrics().stringWidth(this.name)/2,nameFont.getSize());
+		Font typeFont = new Font("Tahoma", Font.PLAIN, 9);
+		g.setFont(typeFont);
+		g.drawString(this.type, this.getWidth()/2 - g.getFontMetrics().stringWidth(this.type)/2,nameFont.getSize() + typeFont.getSize());
 		switch(shape)
 		{
 		case "Circle":
-			g.fillOval((int)(this.getWidth()/2.0 - size/4.0),(int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/2.0),(int)(size/2.0));
+			g.fillOval((int)(this.getWidth()/2.0 - size/4.0),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/2.0),(int)(size/2.0));
 			break;
 		case "Bar":
-			g.fillRect((int)(this.getWidth()/2.0 - size/3.0),(int)(this.getHeight()/2.0 - size/8.0) + g.getFontMetrics().getAscent()/2, (int)(2.0/3.0*size),(int)(size/4.0));
+			g.fillRect((int)(this.getWidth()/2.0 - size/3.0),(int)(this.getHeight()/2.0 - size/8.0) + (nameFont.getSize() + typeFont.getSize())/2, (int)(2.0/3.0*size),(int)(size/4.0));
 			break;	
-		case "3Bar":
-			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) - size/3.0), (int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/4.0),(int)(size/2.0));
-			g.fillRect((int)((this.getWidth()/2.0 - size/8.0)),(int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/4.0),(int)(size/2.0));
-			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) + size /3.0),(int)(this.getHeight()/2.0 - size/4.0) + g.getFontMetrics().getAscent()/2,(int)(size/4.0),(int)(size/2.0));
+		case "Triple Bar":
+			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) - size/3.0), (int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
+			g.fillRect((int)((this.getWidth()/2.0 - size/8.0)),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
+			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) + size /3.0),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
 			break;					
 		default:
 
 		}
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+		this.setText(this.name);
+	}
+
+
+	public String getType() {
+		return type;
+	}
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+	public int getPixelNb() {
+		return pixelNb;
+	}
+
+
+	public void setPixelNb(int pixelNb) {
+		this.pixelNb = pixelNb;
+	}
+
+
+	public String getShape() {
+		return shape;
+	}
+
+
+	public void setShape(String shape) {
+		this.shape = shape;
 	}
 
 

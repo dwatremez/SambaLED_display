@@ -152,9 +152,9 @@ public class InstrumentLine extends JPanel{
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			Object o = JOptionPane.showInputDialog(null, "Name", "Player's name", JOptionPane.QUESTION_MESSAGE, null, null, iSelected.getText());
+			Object o = JOptionPane.showInputDialog(null, "Name", "Musician's name", JOptionPane.QUESTION_MESSAGE, null, null, iSelected.getText());
 			if(o != null)
-				iSelected.setTypeText(o.toString());
+				iSelected.setName(o.toString());
 			updateDisplay();
 		}		
 	}	
@@ -164,7 +164,13 @@ public class InstrumentLine extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 						
-			updateDisplay();
+			InstrumentDialog iDialog = new InstrumentDialog(null, "Edit instrument parameters", true, iSelected);
+			InstrumentItem i = iDialog.showZDialog();
+			if(i != null)
+			{
+				iSelected.setParameters(i.getName(), i.getType(), i.getShape(), i.getPixelNb());
+				updateDisplay();
+			}
 		}		
 	}	
 

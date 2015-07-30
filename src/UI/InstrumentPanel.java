@@ -149,7 +149,6 @@ public class InstrumentPanel extends JPanel {
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
 			JButton but = ((JButton)arg0.getSource());
 			if(but == addBottomLineButton)
 				addLine(0);		
