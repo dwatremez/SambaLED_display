@@ -150,7 +150,7 @@ public class InstrumentDialog extends JDialog {
 		optionPanel.add(pixelNbLabel, gbc);
 		gbc.gridx++;
 		optionPanel.add(pixelNbText, gbc);
-		pixelNbText.getDocument().addDocumentListener(new DocListener());
+		//pixelNbText.getDocument().addDocumentListener(new DocListener());
 		pixelNbText.addKeyListener(new NumericKeyListener());
 		if(myItem != null)
 		{
@@ -189,25 +189,37 @@ public class InstrumentDialog extends JDialog {
 		loaded = true;
 	}
 
-	public void setDefaultRadioShape(String type)
+	public void setDefaultFromType(String type)
 	{
 		switch(type)
 		{
 		case "Agogo":
+			pixelNbText.setText(String.valueOf(10));
 			tripleBarShapeRadio.setSelected(true);
 			break;
 		case "Chocalho":
+			pixelNbText.setText(String.valueOf(7));
 			barShapeRadio.setSelected(true);
 			break;
 		case "Surdo 1":
 		case "Surdo 2":
 		case "Surdo 3":
+			pixelNbText.setText(String.valueOf(42));
+			circleShapeRadio.setSelected(true);
+			break;			
 		case "Caixa":
 		case "Repique":
-		case "Tarol":
-		case "Tamborim":
+		case "Tarol":	
 		case "Cuica":
+			pixelNbText.setText(String.valueOf(28));
+			circleShapeRadio.setSelected(true);
+			break;			
+		case "Tamborim":
+			pixelNbText.setText(String.valueOf(13));
+			circleShapeRadio.setSelected(true);
+			break;		
 		case "Balloon":
+			pixelNbText.setText(String.valueOf(40));
 			circleShapeRadio.setSelected(true);
 			break;			
 		default:
@@ -216,9 +228,11 @@ public class InstrumentDialog extends JDialog {
 
 	private void updateInstrument()
 	{
-		if(myItem != null && loaded && containsOnlyNumericValues(pixelNbText.getText()))
+		if(myItem != null && loaded)
 		{
 			myItem.setName(nameText.getText());
+			if(myItem.getType() != typeBox.getSelectedItem().toString())
+				setDefaultFromType(typeBox.getSelectedItem().toString());
 			myItem.setType(typeBox.getSelectedItem().toString());
 			if(!pixelNbText.getText().isEmpty())
 				myItem.setPixelNb(Integer.valueOf(pixelNbText.getText()));
@@ -234,18 +248,6 @@ public class InstrumentDialog extends JDialog {
 			myItem.repaint();
 		}
 			
-	}
-
-	private boolean containsOnlyNumericValues(String str)
-	{
-		try {
-			Integer.parseInt(str);
-		}
-		catch (NumberFormatException e) {
-			return false;            
-		}
-
-		return true;
 	}
 
 	public InstrumentItem showZDialog()
@@ -290,6 +292,7 @@ public class InstrumentDialog extends JDialog {
 		{
 		    if(!isNumeric(arg0.getKeyChar()))
 		    	((JTextField)arg0.getSource()).setText(((JTextField)arg0.getSource()).getText().replace(String.valueOf(arg0.getKeyChar()), ""));
+		    updateInstrument();
 		}
 
 		@Override
