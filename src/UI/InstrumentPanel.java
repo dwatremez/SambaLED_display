@@ -43,6 +43,9 @@ public class InstrumentPanel extends JPanel {
     private JPanel instrumentItemPanel = new JPanel();
     private ArrayList<InstrumentItem> instrumentExamples = new ArrayList<>();
     
+    private InstrumentItem instrumentSelected;
+    private InstrumentLine lineSelected;
+    
 	private Color backColor = Color.decode("#EEEEEE");
 	
 	public InstrumentPanel()
@@ -100,7 +103,7 @@ public class InstrumentPanel extends JPanel {
 			gbc.gridx = i;
 			gbc.gridy = 0;
 			gbc.weightx = 1.0;
-			setDnD(instrumentExamples.get(i));
+			setInstrumentDnD(instrumentExamples.get(i));
 			instrumentItemPanel.add(instrumentExamples.get(i), gbc);
 		}		
 		
@@ -108,18 +111,18 @@ public class InstrumentPanel extends JPanel {
 
 	}
 	
-	private void setDnD(InstrumentItem i)
+	private void setInstrumentDnD(InstrumentItem i)
 	{			
 		DragSource ds = new DragSource();
 		ds.createDefaultDragGestureRecognizer(i,
-				DnDConstants.ACTION_COPY, new DragGestureListImp());		
+				DnDConstants.ACTION_COPY, new InstrumentDragGestureListImp());		
 	}
 
 
 	public void addLine(int pos)
 	{
 		InstrumentLine iL = new InstrumentLine(lines.size() + 1);
-		new MyDropTargetListImp(iL); // Add to DropList
+		new InstrumentDropTargetListImp(iL); // Add to DropList
 		if(pos == 1)
 			lines.add(iL);
 		else
@@ -156,7 +159,7 @@ public class InstrumentPanel extends JPanel {
 		}		
 	}
 	
-	class DragGestureListImp implements DragGestureListener {
+	class InstrumentDragGestureListImp implements DragGestureListener {
 
 		@Override
 		public void dragGestureRecognized(DragGestureEvent event) {
@@ -167,21 +170,33 @@ public class InstrumentPanel extends JPanel {
 			Cursor cursor = null;
 			InstrumentItem myItem = (InstrumentItem) event.getComponent();
 
-			if (event.getDragAction() == DnDConstants.ACTION_COPY) {
+			if (event.getDragAction() == DnDConstants.ACTION_COPY)
 				cursor = DragSource.DefaultCopyDrop;
+			else if(event.getDragAction() == DnDConstants.ACTION_MOVE)
+			{	
+				instrumentSelected = myItem;
+				lineSelected = ((InstrumentLine)(myItem.getParent().getParent()));
+				cursor = DragSource.DefaultMoveDrop;
 			}
+				
 
-			event.startDrag(cursor, new TransferableInstrument(myItem));
+			event.startDrag(cursor, new TransferableInstrument(myItem));/*
+			if(event.getDragAction() == DnDConstants.ACTION_MOVE)
+			{
+				InstrumentLine iL= ((InstrumentLine)(myItem.getParent().getParent()));
+				iL.getInstruments().remove(myItem);
+				iL.updateDisplay();
+			}*/
 		}
 	}
 
-	class MyDropTargetListImp extends DropTargetAdapter implements
+	class InstrumentDropTargetListImp extends DropTargetAdapter implements
 			DropTargetListener {
 
 		private DropTarget dropTarget;
 		private JPanel panel;
 
-		public MyDropTargetListImp(JPanel panel) {
+		public InstrumentDropTargetListImp(JPanel panel) {
 			this.panel = panel;
 
 			dropTarget = new DropTarget(panel, DnDConstants.ACTION_COPY, this,
@@ -194,11 +209,24 @@ public class InstrumentPanel extends JPanel {
 				InstrumentItem myItem = (InstrumentItem) tr.getTransferData(TransferableInstrument.instrumentFlavor);
 
 				if (event.isDataFlavorSupported(TransferableInstrument.instrumentFlavor)) {
-					event.acceptDrop(DnDConstants.ACTION_COPY);
+					if(event.getDropAction() == DnDConstants.ACTION_COPY)
+					{
+						System.out.println("Copy");
+						event.acceptDrop(DnDConstants.ACTION_COPY);
+					}
+					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
+					{
+						System.out.println("Move");
+						event.acceptDrop(DnDConstants.ACTION_MOVE);
+					}
 					DragSource ds = new DragSource();
-					ds.createDefaultDragGestureRecognizer(myItem,
-							DnDConstants.ACTION_MOVE, new DragGestureListImp());	
+					ds.createDefaultDragGestureRecognizer(myItem,DnDConstants.ACTION_MOVE, new InstrumentDragGestureListImp());	
 					((InstrumentLine)this.panel).addInstrument(myItem, event.getLocation());
+					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
+					{
+						lineSelected.getInstruments().remove(instrumentSelected);
+						lineSelected.updateDisplay();
+					}
 					event.dropComplete(true);
 					this.panel.validate();
 					return;

@@ -135,7 +135,12 @@ public class InstrumentLine extends JPanel{
 			instrumentsPanel.add(instruments.get(i), gbc);
 		}
 		this.revalidate();
-
+		this.repaint();
+	}
+	
+	public ArrayList<InstrumentItem> getInstruments()
+	{
+		return instruments;
 	}
 
 
