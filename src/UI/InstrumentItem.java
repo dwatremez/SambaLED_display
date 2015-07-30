@@ -44,7 +44,7 @@ public class InstrumentItem extends JLabel{
 	
 	public void setParameters(String pType, int pPixelNb)
 	{
-		this.type = pType;
+		setTypeText(pType);
 		this.pixelNb = pPixelNb;
 		
 		switch(pType)
