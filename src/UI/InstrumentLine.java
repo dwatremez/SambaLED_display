@@ -152,7 +152,7 @@ public class InstrumentLine extends JPanel{
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			Object o = JOptionPane.showInputDialog(null, "Name", "Musician's name", JOptionPane.QUESTION_MESSAGE, null, null, iSelected.getText());
+			Object o = JOptionPane.showInputDialog(null, "Name", "Musician's name", JOptionPane.QUESTION_MESSAGE, null, null, iSelected.getName());
 			if(o != null)
 				iSelected.setName(o.toString());
 			updateDisplay();
