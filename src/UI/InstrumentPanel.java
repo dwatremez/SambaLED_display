@@ -326,6 +326,8 @@ public class InstrumentPanel extends JPanel {
 					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
 						event.acceptDrop(DnDConstants.ACTION_MOVE);
 					addLine(event.getLocation(), myLine);
+					lines.remove(lineSelected);
+					updateLinesDisplay();
 					/*
 					(InstrumentLine)this.panel).addInstrument(myItem, event.getLocation());
 					lineSelected.getInstruments().remove(instrumentSelected);
