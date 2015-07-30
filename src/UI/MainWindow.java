@@ -38,8 +38,8 @@ public class MainWindow extends JFrame {
 		mainContainer.add(instPanel, BorderLayout.CENTER);
 		mainContainer.add(sidePanel, BorderLayout.EAST);
 		
-		instPanel.addLine(0);
-		instPanel.addLine(0);
+		instPanel.addLine();
+		instPanel.addLine();
 		
 
         setMinimumSize(new Dimension(1300,500));
