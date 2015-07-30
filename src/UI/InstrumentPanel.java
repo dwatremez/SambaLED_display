@@ -20,14 +20,13 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.TransferHandler;
 
 public class InstrumentPanel extends JPanel {
 
@@ -161,6 +160,10 @@ public class InstrumentPanel extends JPanel {
 
 		@Override
 		public void dragGestureRecognized(DragGestureEvent event) {
+			InputEvent ie = event.getTriggerEvent();
+			if((ie.getModifiers() & InputEvent.BUTTON1_MASK) == 0)
+				return;
+				
 			Cursor cursor = null;
 			InstrumentItem myItem = (InstrumentItem) event.getComponent();
 
