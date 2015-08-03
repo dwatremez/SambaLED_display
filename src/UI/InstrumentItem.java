@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -19,6 +21,8 @@ public class InstrumentItem extends JLabel{
 	private ArrayList<Color> pixelColor = new ArrayList<>();
 
 	private Color instrumentColor = Color.WHITE;
+	private Color backColor = Color.decode("#CFD8DC");
+	int transparency = 0;
 
 	public InstrumentItem()
 	{	
@@ -40,7 +44,42 @@ public class InstrumentItem extends JLabel{
 
 	private void init()
 	{
-		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));			
+		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));
+		setMouseListener();
+	}
+	
+	public void setMouseListener()
+	{
+		transparency = 0;
+		this.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				System.out.println("Enter");
+				transparency = 100;
+				repaint();
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				System.out.println("Exit");
+				transparency = 0;
+				repaint();
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				System.out.println("Released");
+				transparency = 0;
+				repaint();}			
+		});
+		
 	}
 
 
@@ -106,8 +145,8 @@ public class InstrumentItem extends JLabel{
 	}
 
 	public void paintComponent(Graphics g) {
-		//g.setColor(Color.DARK_GRAY);
-		//g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		g.setColor(new Color(backColor.getRed(), backColor.getGreen(), backColor.getBlue(), transparency));//Color.DARK_GRAY);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(instrumentColor);
 		Font nameFont = new Font("Tahoma", Font.PLAIN, 12);
 		g.setFont(nameFont);

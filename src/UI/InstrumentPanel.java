@@ -285,6 +285,7 @@ public class InstrumentPanel extends JPanel {
 					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
 						event.acceptDrop(DnDConstants.ACTION_MOVE);
 					setInstrumentDnDMove(myItem);
+					myItem.setMouseListener();
 					((InstrumentLine)this.panel).addInstrument(myItem, event.getLocation());
 					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
 					{
