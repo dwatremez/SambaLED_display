@@ -292,8 +292,11 @@ public class InstrumentPanel extends JPanel {
 						lineSelected.getInstruments().remove(instrumentSelected);
 						lineSelected.updateDisplay();
 					}
+					else
+						instrumentItemPanel.repaint();
+					
 					event.dropComplete(true);
-					this.panel.validate();
+					this.panel.revalidate();
 					return;
 				}
 				event.rejectDrop();

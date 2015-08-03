@@ -8,9 +8,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-public class InstrumentItem extends JLabel{
+public class InstrumentItem extends JPanel{
 
 	private String name = "Luc";
 	private String type = "Caixa";
@@ -21,21 +21,21 @@ public class InstrumentItem extends JLabel{
 	private ArrayList<Color> pixelColor = new ArrayList<>();
 
 	private Color instrumentColor = Color.WHITE;
-	private Color backColor = Color.decode("#CFD8DC");
-	int transparency = 0;
+	private Color focusColor = Color.decode("#CFD8DC");
+	boolean focus = false;
 
 	public InstrumentItem()
 	{	
 		init();
 	}
-	
+
 
 	public InstrumentItem(String type, int pixelNb)
 	{
 		init();
 		setParameters(type, pixelNb);
 	}	
-	
+
 	public InstrumentItem(String name, String type, String shape, int pixelNb)
 	{
 		init();
@@ -47,10 +47,10 @@ public class InstrumentItem extends JLabel{
 		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));
 		setMouseListener();
 	}
-	
+
 	public void setMouseListener()
 	{
-		transparency = 0;
+		focus = false;
 		this.addMouseListener(new MouseListener(){
 
 			@Override
@@ -59,14 +59,14 @@ public class InstrumentItem extends JLabel{
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
 				System.out.println("Enter");
-				transparency = 100;
+				focus = true;
 				repaint();
 			}
 
 			@Override
 			public void mouseExited(MouseEvent arg0) {
 				System.out.println("Exit");
-				transparency = 0;
+				focus = false;
 				repaint();
 			}
 
@@ -74,12 +74,10 @@ public class InstrumentItem extends JLabel{
 			public void mousePressed(MouseEvent arg0) {}
 
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				System.out.println("Released");
-				transparency = 0;
-				repaint();}			
-		});
-		
+			public void mouseReleased(MouseEvent arg0) {}
+		}
+		);
+
 	}
 
 
@@ -96,13 +94,13 @@ public class InstrumentItem extends JLabel{
 		this.pixelNb = pixelNb;
 		this.repaint();
 	}
-	
+
 	public void setParameters(String pType, int pPixelNb)
 	{
 		this.type = pType;
 		this.name = pType;
 		this.pixelNb = pPixelNb;
-		
+
 		switch(pType)
 		{
 		case "Surdo 1":
@@ -140,12 +138,15 @@ public class InstrumentItem extends JLabel{
 
 		if(pPixelNb != 0)
 			this.pixelNb = pPixelNb;
-		
+
 		this.revalidate();
 	}
 
 	public void paintComponent(Graphics g) {
-		g.setColor(new Color(backColor.getRed(), backColor.getGreen(), backColor.getBlue(), transparency));//Color.DARK_GRAY);
+		if(focus)
+			g.setColor(focusColor);
+		else
+			g.setColor(this.getParent().getBackground());
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(instrumentColor);
 		Font nameFont = new Font("Tahoma", Font.PLAIN, 12);
@@ -180,7 +181,7 @@ public class InstrumentItem extends JLabel{
 
 	public void setName(String name) {
 		this.name = name;
-		this.setText(this.name);
+		//this.setText(this.name);
 	}
 
 
