@@ -4,13 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
-
-public class InstrumentItem extends JPanel{
+public class InstrumentItem extends DragFocusJPanel {
 
 	private String name = "Luc";
 	private String type = "Caixa";
@@ -20,18 +16,19 @@ public class InstrumentItem extends JPanel{
 
 	private ArrayList<Color> pixelColor = new ArrayList<>();
 
-	private Color instrumentColor = Color.WHITE;
-	private Color focusColor = Color.decode("#CFD8DC");
-	boolean focus = false;
+	private static Color instrumentColor = Color.WHITE;
+	private static Color backColor = Color.decode("#90A4AE");
 
 	public InstrumentItem()
 	{	
+		super(backColor,true);
 		init();
 	}
 
 
 	public InstrumentItem(String type, int pixelNb)
 	{
+		super(backColor,true);
 		init();
 		setParameters(type, pixelNb);
 	}	
@@ -41,43 +38,15 @@ public class InstrumentItem extends JPanel{
 		init();
 		setParameters(name, type, shape, pixelNb);
 	}
+	
+	public String toString()
+	{
+		return this.name + " " + this.type + " " + this.pixelNb + " pixels";
+	}
 
 	private void init()
 	{
 		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));
-		setMouseListener();
-	}
-
-	public void setMouseListener()
-	{
-		focus = false;
-		this.addMouseListener(new MouseListener(){
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				System.out.println("Enter");
-				focus = true;
-				repaint();
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				System.out.println("Exit");
-				focus = false;
-				repaint();
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {}
-		}
-		);
-
 	}
 
 
@@ -143,10 +112,7 @@ public class InstrumentItem extends JPanel{
 	}
 
 	public void paintComponent(Graphics g) {
-		if(focus)
-			g.setColor(focusColor);
-		else
-			g.setColor(this.getParent().getBackground());
+		g.setColor(this.getBackground());
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		g.setColor(instrumentColor);
 		Font nameFont = new Font("Tahoma", Font.PLAIN, 12);
@@ -181,7 +147,6 @@ public class InstrumentItem extends JPanel{
 
 	public void setName(String name) {
 		this.name = name;
-		//this.setText(this.name);
 	}
 
 
@@ -213,6 +178,4 @@ public class InstrumentItem extends JPanel{
 	public void setShape(String shape) {
 		this.shape = shape;
 	}
-
-
 }

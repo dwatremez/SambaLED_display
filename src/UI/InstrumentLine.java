@@ -21,8 +21,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-public class InstrumentLine extends JPanel{	
-
+public class InstrumentLine extends DragFocusJPanel{	
+	
 	private Dimension dim = new Dimension();
 
 	private ArrayList<InstrumentItem> instruments = new ArrayList<>();
@@ -37,22 +37,29 @@ public class InstrumentLine extends JPanel{
 	private JMenuItem renameInstrumentMenuItem = new JMenuItem("Rename player");
 	private JMenuItem editInstrumentMenuItem = new JMenuItem("Edit instrument parameters");
 
-	private Color backColor = Color.GRAY;
+	private static Color backColor = Color.decode("#90A4AE");
 
-	private InstrumentItem iSelected;
+	private InstrumentItem instrumentSelected;
 
 
 	public InstrumentLine()
 	{	
+		super(backColor, false);
 		initObject();
 	}
 
 
 	public InstrumentLine(int i)
 	{
+		super(backColor, false);
 		initObject();
 		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		lineLabel.setText(String.valueOf(i));
+	}
+	
+	public String toString()
+	{
+		return "Line: " + lineLabel.getText();
 	}
 
 	private void initObject()
@@ -69,11 +76,24 @@ public class InstrumentLine extends JPanel{
 		deleteInstrumentMenuItem.addActionListener(new DeleteInstrumentListener());
 		renameInstrumentMenuItem.addActionListener(new RenameInstrumentListener());
 		editInstrumentMenuItem.addActionListener(new EditInstrumentListener());
+		
 
-		// Set every background the same color
+		setEveryComponentColor(backColor);
+		
+	}
+	
+	private void setEveryComponentColor(Color c)
+	{
 		for (int i = 0; i < this.getComponentCount(); i++) {
-			this.getComponent(i).setBackground(backColor);
+			this.getComponent(i).setBackground(c);
 		}
+	}
+	
+	
+	public void repaint()
+	{
+		setEveryComponentColor(this.getBackground());
+		super.repaint();
 	}
 
 	public void addInstrument(InstrumentItem iI, Point p)
@@ -97,11 +117,18 @@ public class InstrumentLine extends JPanel{
 
 		this.mouseMenu(iI);
 		this.updateDisplay();
+		this.repaint();
 	}
 
 	public void addInstrument(InstrumentItem iI)
 	{
 		addInstrument(iI, null);
+	}
+	
+	public void removeInstrument(InstrumentItem iI)
+	{
+		this.instruments.remove(iI);
+		this.updateDisplay();
 	}
 
 	private void mouseMenu(InstrumentItem iI)
@@ -110,7 +137,7 @@ public class InstrumentLine extends JPanel{
 			public void mouseReleased(MouseEvent e){
 				if(e.isPopupTrigger())
 				{
-					iSelected = iI;
+					instrumentSelected = iI;
 					instrumentPopMenu.add(deleteInstrumentMenuItem);
 					instrumentPopMenu.add(renameInstrumentMenuItem);
 					instrumentPopMenu.add(editInstrumentMenuItem);
@@ -121,9 +148,9 @@ public class InstrumentLine extends JPanel{
 		});
 
 	}
-
+	
 	public void updateDisplay()
-	{		
+	{	
 		instrumentsPanel.removeAll();
 		for(int i =0; i<instruments.size(); i++)
 		{
@@ -147,9 +174,9 @@ public class InstrumentLine extends JPanel{
 	class DeleteInstrumentListener implements ActionListener
 	{
 		@Override
-		public void actionPerformed(ActionEvent arg0) {			
-			instruments.remove(iSelected);
-			updateDisplay();	
+		public void actionPerformed(ActionEvent arg0) {	
+			removeInstrument(instrumentSelected);
+			repaint();	
 		}		
 	}
 
@@ -157,10 +184,10 @@ public class InstrumentLine extends JPanel{
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			Object o = JOptionPane.showInputDialog(null, "Name", "Musician's name", JOptionPane.QUESTION_MESSAGE, null, null, iSelected.getName());
+			Object o = JOptionPane.showInputDialog(null, "Name", "Musician's name", JOptionPane.QUESTION_MESSAGE, null, null, instrumentSelected.getName());
 			if(o != null)
-				iSelected.setName(o.toString());
-			updateDisplay();
+				instrumentSelected.setName(o.toString());
+			repaint();
 		}		
 	}	
 
@@ -169,12 +196,12 @@ public class InstrumentLine extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 						
-			InstrumentDialog iDialog = new InstrumentDialog(null, "Edit instrument parameters", true, iSelected);
+			InstrumentDialog iDialog = new InstrumentDialog(null, "Edit instrument parameters", true, instrumentSelected);
 			InstrumentItem i = iDialog.showZDialog();
 			if(i != null)
 			{
-				iSelected.setParameters(i.getName(), i.getType(), i.getShape(), i.getPixelNb());
-				updateDisplay();
+				instrumentSelected.setParameters(i.getName(), i.getType(), i.getShape(), i.getPixelNb());
+				repaint();
 			}
 		}		
 	}	

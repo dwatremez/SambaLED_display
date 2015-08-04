@@ -2,26 +2,13 @@ package UI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -29,7 +16,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class InstrumentPanel extends JPanel {
+public class InstrumentPanel extends DragFocusJPanel {
+
+	private MyGlassPanel myGlass;
 
 	private JPanel linesPanel = new JPanel();
 
@@ -47,9 +36,22 @@ public class InstrumentPanel extends JPanel {
 	private InstrumentItem instrumentSelected;
 	private InstrumentLine lineSelected;
 
-	private Color backColor = Color.decode("#EEEEEE");
+	private static Color backColor = Color.decode("#EEEEEE");
 
 	public InstrumentPanel()
+	{
+		super(backColor, false);
+		init();		
+	}
+
+	public InstrumentPanel(MyGlassPanel glass)
+	{
+		super(backColor, false);
+		this.myGlass = glass;
+		init();
+	}
+
+	public void init()
 	{
 		this.setLayout(new BorderLayout());
 		this.setBackground(backColor);
@@ -62,9 +64,6 @@ public class InstrumentPanel extends JPanel {
 		instrumentLinesPanel.setBackground(backColor);
 		scrollPanel.setBorder(BorderFactory.createEmptyBorder());
 
-
-		new LineDropTargetListImp(instrumentLinesPanel); // Add to DropList
-
 		linesPanel.add(addTopLineButton, BorderLayout.NORTH);
 		linesPanel.add(scrollPanel, BorderLayout.CENTER);
 		linesPanel.add(addBottomLineButton, BorderLayout.SOUTH);
@@ -73,6 +72,11 @@ public class InstrumentPanel extends JPanel {
 
 		this.add(linesPanel, BorderLayout.CENTER);
 		this.add(instrumentItemPanel, BorderLayout.SOUTH);
+	}
+
+	public void setMyGlass(MyGlassPanel glass)
+	{
+		this.myGlass = glass;
 	}
 
 	private void configureNewLineButton(JButton but)
@@ -86,7 +90,6 @@ public class InstrumentPanel extends JPanel {
 
 	private void configureInstrumentExamples()
 	{
-		instrumentItemPanel.setBackground(Color.gray);
 		instrumentItemPanel.setLayout(new GridBagLayout());
 
 		instrumentExamples.add(new InstrumentItem("Surdo 1", 42));
@@ -101,39 +104,17 @@ public class InstrumentPanel extends JPanel {
 		instrumentExamples.add(new InstrumentItem("Cuica", 28));
 		instrumentExamples.add(new InstrumentItem("Balloon", 28));
 
+		instrumentItemPanel.setBackground(instrumentExamples.get(0).getBackground());
+
 		for(int i = 0; i<instrumentExamples.size(); i++)
 		{
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.gridx = i;
 			gbc.gridy = 0;
 			gbc.weightx = 1.0;
-			setInstrumentDnDCopy(instrumentExamples.get(i));
 			instrumentItemPanel.add(instrumentExamples.get(i), gbc);
-		}		
-
-
-
-	}
-
-	private void setInstrumentDnDCopy(InstrumentItem i)
-	{			
-		DragSource ds = new DragSource();
-		ds.createDefaultDragGestureRecognizer(i,
-				DnDConstants.ACTION_COPY, new InstrumentDragGestureListImp());		
-	}
-	
-	private void setInstrumentDnDMove(InstrumentItem i)
-	{			
-		DragSource ds = new DragSource();
-		ds.createDefaultDragGestureRecognizer(i,
-				DnDConstants.ACTION_MOVE, new InstrumentDragGestureListImp());		
-	}
-
-	private void setLineDnDMove(InstrumentLine l)
-	{			
-		DragSource ds = new DragSource();
-		ds.createDefaultDragGestureRecognizer(l,
-				DnDConstants.ACTION_MOVE, new LineDragGestureListImp());		
+			instrumentExamples.get(i).setListenersForGlass(myGlass);
+		}	
 	}
 
 	public void addLine()
@@ -141,44 +122,58 @@ public class InstrumentPanel extends JPanel {
 		addLine(lines.size());
 	}
 
-	public void addLine(Point p, InstrumentLine iLine)
+	public void addLine(InstrumentLine iLine, Point p)
 	{
-		for(int i = 0; i<lines.size(); i++)
+		if(!lines.isEmpty())
 		{
-			if(p.getY() < lines.get(i).getY())
+			for(int i = 0; i<lines.size(); i++)
 			{
-				addLine(i, iLine);
-				break;
-			}				
+				if(p.getY() < lines.get(i).getY())
+				{
+					System.out.println("lines(" + i + ").getY: " + lines.get(i).getY());
+					addLine(iLine, i);
+					break;
+				}				
+			}
+
+			if(p.getY() > lines.get(lines.size() -1).getY() && p.getY() < instrumentLinesPanel.getHeight())
+				addLine(iLine, lines.size());
 		}
-		if(p.getY() > lines.get(lines.size() -1).getY() && p.getY() < instrumentLinesPanel.getHeight())
-			addLine(lines.size(), iLine);
+		else
+			addLine(iLine,0);
 	}
-	
+
 	public void addLine(int pos)
 	{
 		InstrumentLine iL = new InstrumentLine(lines.size() + 1);
-		addLine(pos, iL);		
+		addLine(iL, pos);		
 	}
 
-	public void addLine(int pos, InstrumentLine iL)
+	public void addLine(InstrumentLine iLine, int pos)
 	{
-		new InstrumentDropTargetListImp(iL); // Add to DropList
-		setLineDnDMove(iL);
+		iLine.setListenersForGlass(myGlass);
 		if(pos < lines.size())
-			lines.add(pos, iL);
+			lines.add(pos, iLine);
 		else
-			lines.add(iL);	
-		allInstrumentItemDnDMove(iL);
+			lines.add(iLine);	
+
 		updateLinesDisplay();
 	}
-	
-	public void allInstrumentItemDnDMove(InstrumentLine iL)
+
+	public void removeLine(InstrumentLine iLine)
 	{
-		for(int i = 0; i<iL.getInstruments().size(); i++)
-		{
-			setInstrumentDnDMove(iL.getInstruments().get(i));
-		}
+		if(lines.contains(iLine))
+			lines.remove(iLine);
+	}
+
+	public ArrayList getLines()
+	{
+		return lines;
+	}
+
+	public JPanel getInstrumentLinesPanel()
+	{
+		return instrumentLinesPanel;
 	}
 
 	public void updateLinesDisplay()
@@ -209,195 +204,6 @@ public class InstrumentPanel extends JPanel {
 			else
 				addLine();
 		}		
-	}
-
-	class InstrumentDragGestureListImp implements DragGestureListener {
-
-		@Override
-		public void dragGestureRecognized(DragGestureEvent event) {
-			InputEvent ie = event.getTriggerEvent();
-			if((ie.getModifiers() & InputEvent.BUTTON1_MASK) == 0)
-				return;
-
-			Cursor cursor = null;
-			InstrumentItem myItem = (InstrumentItem) event.getComponent();
-
-			if (event.getDragAction() == DnDConstants.ACTION_COPY)
-				cursor = DragSource.DefaultCopyDrop;
-			else if(event.getDragAction() == DnDConstants.ACTION_MOVE)
-			{	
-				instrumentSelected = myItem;
-				lineSelected = ((InstrumentLine)(myItem.getParent().getParent()));
-				cursor = DragSource.DefaultMoveDrop;
-			}
-
-
-			event.startDrag(cursor, new TransferableInstrument(myItem));
-		}
-	}
-
-	class LineDragGestureListImp implements DragGestureListener {
-
-		@Override
-		public void dragGestureRecognized(DragGestureEvent event) {
-			InputEvent ie = event.getTriggerEvent();
-			if((ie.getModifiers() & InputEvent.BUTTON1_MASK) == 0)
-				return;
-
-			Cursor cursor = null;
-			InstrumentLine myLine = (InstrumentLine) event.getComponent();
-
-			if (event.getDragAction() == DnDConstants.ACTION_COPY)
-				cursor = DragSource.DefaultCopyDrop;
-			else if(event.getDragAction() == DnDConstants.ACTION_MOVE)
-			{	
-				lineSelected = myLine;
-				cursor = DragSource.DefaultMoveDrop;
-			}
-
-
-			event.startDrag(cursor, new TransferableLine(myLine));
-		}
-	}
-
-	class InstrumentDropTargetListImp extends DropTargetAdapter implements
-	DropTargetListener {
-
-		private DropTarget dropTarget;
-		private JPanel panel;
-
-		public InstrumentDropTargetListImp(JPanel panel) {
-			this.panel = panel;
-
-			dropTarget = new DropTarget(panel, DnDConstants.ACTION_COPY, this,
-					true, null);
-		}
-
-		public void drop(DropTargetDropEvent event) {
-			try {
-
-				if (event.isDataFlavorSupported(TransferableInstrument.instrumentFlavor)) {
-					Transferable tr = event.getTransferable();
-					InstrumentItem myItem = (InstrumentItem) tr.getTransferData(TransferableInstrument.instrumentFlavor);
-					
-					if(event.getDropAction() == DnDConstants.ACTION_COPY)
-						event.acceptDrop(DnDConstants.ACTION_COPY);
-					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
-						event.acceptDrop(DnDConstants.ACTION_MOVE);
-					setInstrumentDnDMove(myItem);
-					myItem.setMouseListener();
-					((InstrumentLine)this.panel).addInstrument(myItem, event.getLocation());
-					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
-					{
-						lineSelected.getInstruments().remove(instrumentSelected);
-						lineSelected.updateDisplay();
-					}
-					else
-						instrumentItemPanel.repaint();
-					
-					event.dropComplete(true);
-					this.panel.revalidate();
-					return;
-				}
-				event.rejectDrop();
-			} catch (Exception e) {
-				e.printStackTrace();
-				event.rejectDrop();
-			}
-		}
-	}
-
-	class LineDropTargetListImp extends DropTargetAdapter implements
-	DropTargetListener {
-
-		private DropTarget dropTarget;
-		private JPanel panel;
-
-		public LineDropTargetListImp(JPanel panel) {
-			this.panel = panel;
-
-			dropTarget = new DropTarget(panel, DnDConstants.ACTION_COPY, this,
-					true, null);
-		}
-
-		public void drop(DropTargetDropEvent event) {
-			try {
-
-				if (event.isDataFlavorSupported(TransferableLine.lineFlavor)) {
-					Transferable tr = event.getTransferable();
-					InstrumentLine myLine = (InstrumentLine) tr.getTransferData(TransferableLine.lineFlavor);
-					
-					if(event.getDropAction() == DnDConstants.ACTION_MOVE)
-						event.acceptDrop(DnDConstants.ACTION_MOVE);
-					addLine(event.getLocation(), myLine);
-					lines.remove(lineSelected);
-					updateLinesDisplay();
-					/*
-					(InstrumentLine)this.panel).addInstrument(myItem, event.getLocation());
-					lineSelected.getInstruments().remove(instrumentSelected);
-					lineSelected.updateDisplay();*/
-					event.dropComplete(true);
-					this.panel.validate();
-					return;
-				}
-				event.rejectDrop();
-			} catch (Exception e) {
-				e.printStackTrace();
-				event.rejectDrop();
-			}
-		}
-	}
-
-	static class TransferableInstrument implements Transferable {
-		protected static DataFlavor instrumentFlavor = new DataFlavor(InstrumentItem.class, InstrumentItem.class.getSimpleName());
-		protected static DataFlavor[] supportedFlavors = { instrumentFlavor };
-		InstrumentItem myItem;
-		public TransferableInstrument(InstrumentItem item) {
-			this.myItem = item;
-		}
-
-		public DataFlavor[] getTransferDataFlavors() {
-			return supportedFlavors;
-		}
-
-		public boolean isDataFlavorSupported(DataFlavor flavor) {
-			if (flavor.equals(instrumentFlavor))
-				return true;
-			return false;
-		}
-
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-			if (flavor.equals(instrumentFlavor))
-				return myItem;
-			else
-				throw new UnsupportedFlavorException(flavor);
-		}
-	}
-
-	static class TransferableLine implements Transferable {
-		protected static DataFlavor lineFlavor = new DataFlavor(InstrumentLine.class, InstrumentLine.class.getSimpleName());
-		protected static DataFlavor[] supportedFlavors = { lineFlavor };
-		InstrumentLine myLine;
-		public TransferableLine(InstrumentLine line) {
-			this.myLine = line;
-		}
-
-		public DataFlavor[] getTransferDataFlavors() {
-			return supportedFlavors;
-		}
-
-		public boolean isDataFlavorSupported(DataFlavor flavor) {
-			if (flavor.equals(lineFlavor))
-				return true;
-			return false;
-		}
-
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-			if (flavor.equals(lineFlavor))
-				return myLine;
-			else
-				throw new UnsupportedFlavorException(flavor);
-		}
 	}
 }
 

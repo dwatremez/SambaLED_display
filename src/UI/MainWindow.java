@@ -10,8 +10,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class MainWindow extends JFrame {
 	
+	private MyGlassPanel myGlass = new MyGlassPanel();
+	
 	private JPanel mainContainer = new JPanel();
-	private InstrumentPanel instPanel = new InstrumentPanel();
+	private InstrumentPanel instPanel = new InstrumentPanel(myGlass);
 	private SidePanel sidePanel = new SidePanel();
 
 	public MainWindow(){
@@ -32,19 +34,18 @@ public class MainWindow extends JFrame {
 		      e.printStackTrace();
 		    }
 		
-		
-		mainContainer.setLayout(new BorderLayout());		
+		mainContainer.setLayout(new BorderLayout());
 		
 		mainContainer.add(instPanel, BorderLayout.CENTER);
 		mainContainer.add(sidePanel, BorderLayout.EAST);
 		
-		instPanel.addLine();
-		instPanel.addLine();
+		//instPanel.addLine();
 		
 
-        setMinimumSize(new Dimension(1300,500));
+        setMinimumSize(new Dimension(1400,500));
 		
 		this.setContentPane(mainContainer);
+		this.setGlassPane(myGlass);
 		this.setVisible(true); 
 	}
 }
