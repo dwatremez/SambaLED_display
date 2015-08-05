@@ -2,17 +2,13 @@ package UI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -105,7 +101,7 @@ public class InstrumentPanel extends JPanel {
 			{
 				if(p.getY() < lines.get(i).getY())
 				{
-					System.out.println("lines(" + i + ").getY: " + lines.get(i).getY());
+					//System.out.println("lines(" + i + ").getY: " + lines.get(i).getY());
 					addLine(iLine, i);
 					break;
 				}				

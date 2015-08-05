@@ -246,7 +246,7 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 								p1.setLocation(lineSelected.getLabel().getWidth() + lineSelected.getInstruments().get(position).getX() - p0.getX(), lineSelected.getHeight());
 
 							Point[] focusP = {p0, p1};
-							myGlass.setFocus(focusP, analogColor(lineSelected.getBackColor()));	
+							myGlass.setFocus(focusP, analogColor(lineSelected.getBackColor(),2));	
 						}
 					}
 
@@ -316,12 +316,17 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 			//System.out.println(p);
 			return p;
 		}
-
+		
 		private Color analogColor(Color c)
+		{
+			return analogColor(c, 10);
+		}
+
+		private Color analogColor(Color c, int i)
 		{
 			float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
 			if(hsb[1] > 0.1)
-				return new Color(Color.HSBtoRGB((float)(hsb[0] + 10 * 30.0/360.0), hsb[1], hsb[2]));
+				return new Color(Color.HSBtoRGB((float)(hsb[0] + i * 30.0/360.0), hsb[1], hsb[2]));
 			else if(hsb[2] < 0.4)
 				return c.brighter();
 			else

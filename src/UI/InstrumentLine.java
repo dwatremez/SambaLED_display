@@ -82,7 +82,7 @@ public class InstrumentLine extends JPanel{
 	
 	public void setNumber(int i)
 	{
-		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		lineLabel.setText(String.valueOf(i));		
 	}
 	
