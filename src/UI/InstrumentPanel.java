@@ -20,8 +20,6 @@ public class InstrumentPanel extends JPanel {
 
 	private MyGlassPanel myGlass;
 
-	private JPanel linesPanel = new JPanel();
-
 	private JPanel instrumentLinesPanel = new JPanel();
 	private JScrollPane scrollPanel = new JScrollPane(instrumentLinesPanel);	
 	private ArrayList<InstrumentLine> lines = new ArrayList<>();
@@ -30,20 +28,16 @@ public class InstrumentPanel extends JPanel {
 	private JPanel instrumentItemPanel = new JPanel();
 	private ArrayList<InstrumentItem> instrumentExamples = new ArrayList<>();
 
-	private InstrumentItem instrumentSelected;
-	private InstrumentLine lineSelected;
 
 	private static Color backColor = Color.decode("#EEEEEE");
 
 	public InstrumentPanel()
 	{
-		//super(backColor, false);
 		init();		
 	}
 
 	public InstrumentPanel(MyGlassPanel glass)
 	{
-		//super(backColor, false);
 		this.myGlass = glass;
 		init();
 	}

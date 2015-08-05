@@ -24,11 +24,7 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 
 	private MyGlassPanel myGlass;
 
-	private boolean draggable = false;
-	private boolean focusable = false;
-
 	protected Color backColor = Color.gray;
-	private Color focusColor = Color.DARK_GRAY;
 
 	public DragFocusJPanel()
 	{
@@ -36,11 +32,9 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 		init();
 	}
 
-	public DragFocusJPanel(Color backColor,  boolean drag)
+	public DragFocusJPanel(Color backColor)
 	{
 		super();
-		this.draggable = drag;
-		this.focusable = true;
 		this.backColor = backColor;
 		this.setBackground(backColor);
 		init();
@@ -48,10 +42,8 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 
 	private void init()
 	{
-		if(this.draggable)
-			this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		if(this.focusable)
-			this.setOpaque(false);		
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		this.setOpaque(false);		
 	}
 
 	public Object clone() {
@@ -69,14 +61,11 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 
 	public void setListenersForGlass(MyGlassPanel glass)
 	{
-		if(this.draggable)
-		{
-			this.myGlass = glass;
-			this.addMouseListener(new MouseGlassListener(myGlass));
-			this.addMouseMotionListener(new MouseGlassListener(myGlass));	
-			this.addMouseListener(new MouseDnDropListener());			
-			this.addMouseMotionListener(new MouseDnDropListener());
-		}
+		this.myGlass = glass;
+		this.addMouseListener(new MouseGlassListener(myGlass));
+		this.addMouseMotionListener(new MouseGlassListener(myGlass));	
+		this.addMouseListener(new MouseDnDropListener());			
+		this.addMouseMotionListener(new MouseDnDropListener());
 	}
 
 	public void resetListenersForGlass()
@@ -209,27 +198,39 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 			// Draw Focus
 			if(source.getClass() == InstrumentItem.class && findComponentUnderMouse() != null)
 			{
+				// Draw focus on Line
 				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
 				{
+					myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+					myGlass.setString("");
 					//System.out.println("Dragged on Line");
 					if(!lineSelected.getInstruments().isEmpty())
 					{
 						int position = 0;
 						boolean inLine = false;
-						if(p.getX() < lineSelected.getWidth())
+						for(int i = 0; i<lineSelected.getInstruments().size(); i++)
+						{
+							if(p.getX() < lineSelected.getInstruments().get(i).getX() + lineSelected.getLabel().getWidth())
+							{
+								position = i;
+								inLine = true;
+								break;
+							}
+						}
+						if(p.getX() < lineSelected.getWidth() && !inLine)
 						{
 							position = lineSelected.getInstruments().size();
 							inLine = true;
 						}
-						for(int i = 0; i<lineSelected.getInstruments().size(); i++)
+						if(position != 0)
 						{
-							if(p.getX() < lineSelected.getInstruments().get(i).getX())
+							if(p.getX() < lineSelected.getInstruments().get(position-1).getX() + lineSelected.getInstruments().get(position-1).getWidth())
 							{
-								position = i;
-								break;
+								myGlass.setBadFocus();
+								inLine = false;
 							}
 						}
-						
+
 						if(inLine)
 						{
 							Point p0 = new Point();
@@ -245,14 +246,16 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 								p1.setLocation(lineSelected.getLabel().getWidth() + lineSelected.getInstruments().get(position).getX() - p0.getX(), lineSelected.getHeight());
 
 							Point[] focusP = {p0, p1};
-							myGlass.setFocus(focusP, analogColor(lineSelected.getBackColor()));		
-							
+							myGlass.setFocus(focusP, analogColor(lineSelected.getBackColor()));	
 						}
 					}
 
 				}
+				// Draw focus on Panel
 				else if((panelSelected =  findInstrumentPanel(findComponentUnderMouse()))!= null)
 				{
+					myGlass.setString("New line");
+					myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 					//System.out.println("Dragged on Panel: ");
 					if(!panelSelected.getLines().isEmpty())
 					{

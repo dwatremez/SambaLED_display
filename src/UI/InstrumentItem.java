@@ -21,21 +21,21 @@ public class InstrumentItem extends DragFocusJPanel {
 
 	public InstrumentItem()
 	{	
-		super(backColor,true);
+		super(backColor);
 		init();
 	}
 
 
 	public InstrumentItem(String type, int pixelNb)
 	{
-		super(backColor,true);
+		super(backColor);
 		init();
 		setParameters(type, pixelNb);
 	}	
 
 	public InstrumentItem(String name, String type, String shape, int pixelNb)
 	{
-		super(backColor,true);
+		super(backColor);
 		init();
 		setParameters(name, type, shape, pixelNb);
 	}

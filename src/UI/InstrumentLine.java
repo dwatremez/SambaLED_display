@@ -44,14 +44,12 @@ public class InstrumentLine extends JPanel{
 
 	public InstrumentLine()
 	{	
-		//super(backColor, false);
 		initObject();
 	}
 
 
 	public InstrumentLine(int i)
 	{
-		//super(backColor, false);
 		initObject();
 		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		lineLabel.setText(String.valueOf(i));
@@ -111,7 +109,14 @@ public class InstrumentLine extends JPanel{
 			{
 				if(p.getX() < instrumentsPanel.getSize().getWidth() / (2 * instruments.size()) * (1 + 2*pos))
 				{
-					instruments.add(pos, iI);
+					if(pos != 0)
+					{
+						if(p.getX() > instruments.get(pos-1).getX() + instruments.get(pos-1).getWidth())
+							instruments.add(pos, iI);
+					}
+					else
+						instruments.add(pos, iI);			
+							
 					break;
 				}
 				else
