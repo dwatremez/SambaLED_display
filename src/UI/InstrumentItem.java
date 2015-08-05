@@ -35,6 +35,7 @@ public class InstrumentItem extends DragFocusJPanel {
 
 	public InstrumentItem(String name, String type, String shape, int pixelNb)
 	{
+		super(backColor,true);
 		init();
 		setParameters(name, type, shape, pixelNb);
 	}

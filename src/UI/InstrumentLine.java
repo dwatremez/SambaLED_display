@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-public class InstrumentLine extends DragFocusJPanel{	
+public class InstrumentLine extends JPanel{	
 	
 	private Dimension dim = new Dimension();
 
@@ -44,14 +44,14 @@ public class InstrumentLine extends DragFocusJPanel{
 
 	public InstrumentLine()
 	{	
-		super(backColor, false);
+		//super(backColor, false);
 		initObject();
 	}
 
 
 	public InstrumentLine(int i)
 	{
-		super(backColor, false);
+		//super(backColor, false);
 		initObject();
 		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		lineLabel.setText(String.valueOf(i));
@@ -80,6 +80,12 @@ public class InstrumentLine extends DragFocusJPanel{
 
 		setEveryComponentColor(backColor);
 		
+	}
+	
+	public void setNumber(int i)
+	{
+		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		lineLabel.setText(String.valueOf(i));		
 	}
 	
 	private void setEveryComponentColor(Color c)
@@ -149,6 +155,7 @@ public class InstrumentLine extends DragFocusJPanel{
 
 	}
 	
+	
 	public void updateDisplay()
 	{	
 		instrumentsPanel.removeAll();
@@ -169,7 +176,16 @@ public class InstrumentLine extends DragFocusJPanel{
 	{
 		return instruments;
 	}
+	
+	public  Color getBackColor()
+	{
+		return this.backColor;
+	}
 
+	public JLabel getLabel()
+	{
+		return this.lineLabel;
+	}
 
 	class DeleteInstrumentListener implements ActionListener
 	{

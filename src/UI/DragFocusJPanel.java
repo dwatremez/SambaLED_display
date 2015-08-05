@@ -41,7 +41,8 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 		super();
 		this.draggable = drag;
 		this.focusable = true;
-		setFocusColors(backColor);
+		this.backColor = backColor;
+		this.setBackground(backColor);
 		init();
 	}
 
@@ -66,34 +67,15 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 		return o;
 	}
 
-	public void setFocusColors(Color c)
-	{
-		backColor = c;
-		float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-		if(hsb[1] > 0.1)
-			focusColor = analogColor(c);
-		else if(hsb[2] < 0.4)
-			focusColor = backColor.brighter();
-		else
-			focusColor = backColor.darker();
-		this.setBackground(backColor);
-	}
-
-	private Color analogColor(Color c)
-	{
-		float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-		return new Color(Color.HSBtoRGB((float)(hsb[0] + 10 * 30.0/360.0), hsb[1], hsb[2]));
-	}
-
 	public void setListenersForGlass(MyGlassPanel glass)
 	{
 		if(this.draggable)
 		{
-			this.addMouseListener(new MouseFocusListener());
 			this.myGlass = glass;
 			this.addMouseListener(new MouseGlassListener(myGlass));
-			this.addMouseMotionListener(new MouseGlassMotionListener(myGlass));	
+			this.addMouseMotionListener(new MouseGlassListener(myGlass));	
 			this.addMouseListener(new MouseDnDropListener());			
+			this.addMouseMotionListener(new MouseDnDropListener());
 		}
 	}
 
@@ -107,7 +89,7 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 
 		setListenersForGlass(myGlass);
 	}
-	
+
 	private InstrumentLine findInstrumentLine(Component c)
 	{			
 		while(c.getParent() != null && c.getClass() != InstrumentLine.class)
@@ -118,7 +100,7 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 			return (InstrumentLine)c;
 		return null;
 	}
-	
+
 	private InstrumentPanel findInstrumentPanel(Component c)
 	{			
 		while(c.getParent() != null && c.getClass() != InstrumentPanel.class)
@@ -134,7 +116,14 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 	{
 		Container container = findContentPane();
 		Point location = MouseInfo.getPointerInfo().getLocation();
-		SwingUtilities.convertPointFromScreen(location, container);
+		try
+		{
+			SwingUtilities.convertPointFromScreen(location, container);
+		}
+		catch(NullPointerException e)
+		{
+			return null;
+		}
 		return SwingUtilities.getDeepestComponentAt(container, location.x, location.y);
 	}
 
@@ -150,11 +139,20 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 	}
 
 
-	public class MouseFocusListener extends MouseAdapter{
+	public class MouseGlassListener extends MouseAdapter{
 
+		private MyGlassPanel myGlass;
+		private BufferedImage image;		
+
+		InstrumentLine lineSelected;
+		InstrumentPanel panelSelected;
+
+		public MouseGlassListener(MyGlassPanel glass){
+			myGlass = glass;
+		}
 		@Override
 		public void mouseEntered(MouseEvent event) {	
-			setBackground(focusColor);						
+			setBackground(analogColor(backColor));						
 			repaint();
 		}
 
@@ -163,41 +161,23 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 			setBackground(backColor);
 			repaint();
 		}
-	}
-
-	public class MouseGlassListener extends MouseAdapter{
-
-		private MyGlassPanel myGlass;
-		private BufferedImage image;
-
-		public MouseGlassListener(MyGlassPanel glass){
-			myGlass = glass;
-		}
 
 		public void mousePressed(MouseEvent event) {
 			if(event.getButton() != MouseEvent.BUTTON1)
 				return;
 
-			//On récupère le composant pour en déduire sa position
+			this.myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			Component composant = event.getComponent();
 			Point location = (Point)event.getPoint().clone();
-
-			//Les méthodes ci-dessous permettent, dans l'ordre, 
-			//de convertir un point en coordonnées d'écran
-			//et de reconvertir ce point en coordonnées fenêtres
 			SwingUtilities.convertPointToScreen(location, composant);
 			SwingUtilities.convertPointFromScreen(location, myGlass);
 
-			//Les instructions ci-dessous permettent de redessiner le composant
 			image = new BufferedImage(composant.getWidth(), composant.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			Graphics g = image.getGraphics();
 			composant.paint(g);
 
-			//On passe les données qui vont bien à notre GlassPane
 			myGlass.setLocation(location);
 			myGlass.setImage(image);
-
-			//On n'oublie pas de dire à notre GlassPane de s'afficher
 			myGlass.setVisible(true);
 		}
 
@@ -205,97 +185,204 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 			if(event.getButton() != MouseEvent.BUTTON1)
 				return;
 
-			//On récupère le composant pour en déduire sa position
+			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			Component composant = event.getComponent();
-			Point location = (Point)event.getPoint().clone();
-			//Les méthodes ci-dessous permettent, dans l'ordre, 
-			//de convertir un point en coordonnées d'écran
-			//et de reconvertir ce point en coordonnées fenêtre
+			Point location = (Point)event.getPoint().clone();			
 			SwingUtilities.convertPointToScreen(location, composant);
 			SwingUtilities.convertPointFromScreen(location, myGlass);
 
-			//On passe les données qui vont bien à notre GlassPane
 			myGlass.setLocation(location);
 			myGlass.setImage(null);
-			//On n'oublie pas de ne plus l'afficher
+			myGlass.setFocus(null, null);
 			myGlass.setVisible(false);
-		}
-	}
-
-
-	public class MouseGlassMotionListener extends MouseAdapter{
-
-		private MyGlassPanel myGlass;
-
-		public MouseGlassMotionListener(MyGlassPanel glass){
-			myGlass = glass;
 		}
 
 		public void mouseDragged(MouseEvent event) {
-			Component c = event.getComponent();
+			Component source = event.getComponent();
 
 			Point p = (Point) event.getPoint().clone();
-			SwingUtilities.convertPointToScreen(p, c);
+			SwingUtilities.convertPointToScreen(p, source);
 			SwingUtilities.convertPointFromScreen(p, myGlass);
+
 			myGlass.setLocation(p);
-			myGlass.repaint();
+
+			// Draw Focus
+			if(source.getClass() == InstrumentItem.class && findComponentUnderMouse() != null)
+			{
+				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
+				{
+					//System.out.println("Dragged on Line");
+					if(!lineSelected.getInstruments().isEmpty())
+					{
+						int position = 0;
+						boolean inLine = false;
+						if(p.getX() < lineSelected.getWidth())
+						{
+							position = lineSelected.getInstruments().size();
+							inLine = true;
+						}
+						for(int i = 0; i<lineSelected.getInstruments().size(); i++)
+						{
+							if(p.getX() < lineSelected.getInstruments().get(i).getX())
+							{
+								position = i;
+								break;
+							}
+						}
+						
+						if(inLine)
+						{
+							Point p0 = new Point();
+							Point p1 = new Point();
+							if(position == 0)
+								p0.setLocation(lineSelected.getLabel().getWidth(), lineSelected.getY());
+							else
+								p0.setLocation(lineSelected.getLabel().getWidth() + lineSelected.getInstruments().get(position-1).getX() + lineSelected.getInstruments().get(position-1).getWidth(), lineSelected.getY());
+
+							if(position == lineSelected.getInstruments().size())
+								p1.setLocation(lineSelected.getWidth() - p0.getX(), lineSelected.getHeight());
+							else
+								p1.setLocation(lineSelected.getLabel().getWidth() + lineSelected.getInstruments().get(position).getX() - p0.getX(), lineSelected.getHeight());
+
+							Point[] focusP = {p0, p1};
+							myGlass.setFocus(focusP, analogColor(lineSelected.getBackColor()));		
+							
+						}
+					}
+
+				}
+				else if((panelSelected =  findInstrumentPanel(findComponentUnderMouse()))!= null)
+				{
+					//System.out.println("Dragged on Panel: ");
+					if(!panelSelected.getLines().isEmpty())
+					{
+						int position = 0;
+						boolean inPanel = false;
+						if(p.getY() < panelSelected.getInstrumentLinesPanel().getHeight())
+						{
+							position = panelSelected.getLines().size();
+							inPanel = true;
+						}
+						for(int i = 0; i<panelSelected.getLines().size(); i++)
+						{
+							if(p.getY() < panelSelected.getLines().get(i).getY())
+							{
+								position = i;
+								break;
+							}
+						}						
+
+						if(inPanel)
+						{
+							Point p0 = new Point();
+							Point p1 = new Point();
+							if(position == 0)
+								p0.setLocation(0, 0);
+							else
+								p0.setLocation(0, panelSelected.getLines().get(position-1).getY() + panelSelected.getLines().get(position-1).getHeight());
+
+							if(position == panelSelected.getLines().size())
+								p1.setLocation(panelSelected.getInstrumentLinesPanel().getWidth(), panelSelected.getInstrumentLinesPanel().getHeight() - p0.getY());
+							else
+								p1.setLocation(panelSelected.getInstrumentLinesPanel().getWidth(), panelSelected.getLines().get(position).getY() - p0.getY());
+
+							Point[] focusP = {p0, p1};
+							myGlass.setFocus(focusP, analogColor(panelSelected.getBackColor()));		
+						}
+					}
+					else
+					{
+						Point p0 = new Point();
+						Point p1 = new Point();
+						p0.setLocation(0, 0);
+						p1.setLocation(panelSelected.getInstrumentLinesPanel().getWidth(), panelSelected.getInstrumentLinesPanel().getHeight() - p0.getY());
+
+						Point[] focusP = {p0, p1};
+						myGlass.setFocus(focusP, analogColor(panelSelected.getBackColor()));	
+					}
+				}
+			}
+			myGlass.repaint();			
+		}
+
+		public Point getPointInComponent(MouseEvent e, Component c)
+		{
+			Point p = (Point) e.getPoint().clone();
+			SwingUtilities.convertPointToScreen(p, e.getComponent());
+			SwingUtilities.convertPointFromScreen(p, c);
+			//System.out.println(p);
+			return p;
+		}
+
+		private Color analogColor(Color c)
+		{
+			float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+			if(hsb[1] > 0.1)
+				return new Color(Color.HSBtoRGB((float)(hsb[0] + 10 * 30.0/360.0), hsb[1], hsb[2]));
+			else if(hsb[2] < 0.4)
+				return c.brighter();
+			else
+				return c.darker();
 		}
 	}
 
 
 	public class MouseDnDropListener extends MouseAdapter{
 
+		InstrumentLine lineSelected;
+		InstrumentPanel panelSelected;
+
 		public void mouseReleased(MouseEvent event) 
 		{
 			if(event.getButton() != MouseEvent.BUTTON1)
 				return;
-			//---------------------------------------------------------------------
-			//On implémente le transfert lorsqu'on relâche le bouton de souris
-			//Ceci afin de ne pas supplanter le fonctionnement du déplacement
-			JComponent source = (JComponent)event.getSource(); 
 
+			JComponent source = (JComponent)event.getSource(); 
 
 			if(source.getClass() == InstrumentItem.class)
 			{
 				// Move and Copy InstrumentItem in InstrumentLine
-				InstrumentLine line;
-				InstrumentPanel panel;
-				if((line = findInstrumentLine(findComponentUnderMouse())) != null)
+				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
 				{
 					System.out.println(" --------------------- ");
-					System.out.println("copy: " + source + " in " + line.toString());
+					System.out.println("copy: " + source + " in " + lineSelected.toString());
 					InstrumentItem clone = (InstrumentItem)((InstrumentItem)source).clone();
 					clone.resetListenersForGlass();
-					line.addInstrument(clone, getPointInComponent(event, line));
-					line.repaint();
+
+					lineSelected.addInstrument(clone, getPointInComponent(event, lineSelected));
+					lineSelected.setBackground(lineSelected.getBackColor());
+					lineSelected.repaint();
+
 					// Delete source
 					deleteOldItem((InstrumentItem)source);
 				}
 
 				// Move and Copy InstrumentItem in new Line in InstrumentPanel
-				else if((panel = findInstrumentPanel(findComponentUnderMouse())) != null)
+				else if((panelSelected = findInstrumentPanel(findComponentUnderMouse())) != null)
 				{
-					line = new InstrumentLine((int)System.currentTimeMillis());
 					InstrumentItem clone = (InstrumentItem)((InstrumentItem)source).clone();
 					clone.resetListenersForGlass();
-					line.addInstrument(clone);
-					panel.addLine(line,getPointInComponent(event, panel.getInstrumentLinesPanel()));
-					panel.repaint();
+
+					lineSelected = new InstrumentLine();
+					lineSelected.addInstrument(clone);
+					panelSelected.addLine(lineSelected,getPointInComponent(event, panelSelected.getInstrumentLinesPanel()));
+					panelSelected.repaint();
+
 					// Delete source
 					deleteOldItem((InstrumentItem)source);
 				}
 			}
 		}
-		
+
 		public Point getPointInComponent(MouseEvent e, Component c)
 		{
 			Point p = (Point) e.getPoint().clone();
 			SwingUtilities.convertPointToScreen(p, e.getComponent());
 			SwingUtilities.convertPointFromScreen(p, c);
-			System.out.println(p);
+			//System.out.println(p);
 			return p;
 		}
-		
+
 		public void deleteOldItem(InstrumentItem source)
 		{
 			InstrumentLine sourceLine;

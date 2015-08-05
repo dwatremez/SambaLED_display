@@ -16,14 +16,11 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class InstrumentPanel extends DragFocusJPanel {
+public class InstrumentPanel extends JPanel {
 
 	private MyGlassPanel myGlass;
 
 	private JPanel linesPanel = new JPanel();
-
-	private JButton addBottomLineButton = new JButton("Add new line"); 
-	private JButton addTopLineButton = new JButton("Add new line"); 
 
 	private JPanel instrumentLinesPanel = new JPanel();
 	private JScrollPane scrollPanel = new JScrollPane(instrumentLinesPanel);	
@@ -40,13 +37,13 @@ public class InstrumentPanel extends DragFocusJPanel {
 
 	public InstrumentPanel()
 	{
-		super(backColor, false);
+		//super(backColor, false);
 		init();		
 	}
 
 	public InstrumentPanel(MyGlassPanel glass)
 	{
-		super(backColor, false);
+		//super(backColor, false);
 		this.myGlass = glass;
 		init();
 	}
@@ -55,37 +52,21 @@ public class InstrumentPanel extends DragFocusJPanel {
 	{
 		this.setLayout(new BorderLayout());
 		this.setBackground(backColor);
-		linesPanel.setLayout(new BorderLayout());
 		instrumentLinesPanel.setLayout(new GridBagLayout());
 
-		configureNewLineButton(addBottomLineButton);
-		configureNewLineButton(addTopLineButton);
 
 		instrumentLinesPanel.setBackground(backColor);
 		scrollPanel.setBorder(BorderFactory.createEmptyBorder());
 
-		linesPanel.add(addTopLineButton, BorderLayout.NORTH);
-		linesPanel.add(scrollPanel, BorderLayout.CENTER);
-		linesPanel.add(addBottomLineButton, BorderLayout.SOUTH);
-
 		configureInstrumentExamples();
-
-		this.add(linesPanel, BorderLayout.CENTER);
+		
+		this.add(scrollPanel, BorderLayout.CENTER);
 		this.add(instrumentItemPanel, BorderLayout.SOUTH);
 	}
-
+	
 	public void setMyGlass(MyGlassPanel glass)
 	{
 		this.myGlass = glass;
-	}
-
-	private void configureNewLineButton(JButton but)
-	{
-		but.addActionListener(new AddLineListener());
-		but.setBackground(backColor);
-		but.setBorderPainted(false);
-		but.setFont(new Font("Tahoma", Font.PLAIN, 26));
-		but.setFocusPainted(false);
 	}
 
 	private void configureInstrumentExamples()
@@ -135,23 +116,21 @@ public class InstrumentPanel extends DragFocusJPanel {
 					break;
 				}				
 			}
-
 			if(p.getY() > lines.get(lines.size() -1).getY() && p.getY() < instrumentLinesPanel.getHeight())
 				addLine(iLine, lines.size());
 		}
-		else
+		else if(p.getY() < instrumentLinesPanel.getHeight())
 			addLine(iLine,0);
 	}
 
 	public void addLine(int pos)
 	{
-		InstrumentLine iL = new InstrumentLine(lines.size() + 1);
+		InstrumentLine iL = new InstrumentLine();
 		addLine(iL, pos);		
 	}
 
 	public void addLine(InstrumentLine iLine, int pos)
 	{
-		iLine.setListenersForGlass(myGlass);
 		if(pos < lines.size())
 			lines.add(pos, iLine);
 		else
@@ -165,8 +144,13 @@ public class InstrumentPanel extends DragFocusJPanel {
 		if(lines.contains(iLine))
 			lines.remove(iLine);
 	}
+	
+	public Color getBackColor()
+	{
+		return this.backColor;
+	}
 
-	public ArrayList getLines()
+	public ArrayList<InstrumentLine> getLines()
 	{
 		return lines;
 	}
@@ -187,23 +171,10 @@ public class InstrumentPanel extends DragFocusJPanel {
 			gbc.weightx = 1.0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.insets = new Insets( 10, 0, 10, 0 );
+			lines.get(i).setNumber(lines.size() - i);
 			instrumentLinesPanel.add(lines.get(i), gbc);
 		}
 		this.revalidate();
-	}
-
-
-
-	class AddLineListener implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			JButton but = ((JButton)arg0.getSource());
-			if(but == addTopLineButton)
-				addLine(0);		
-			else
-				addLine();
-		}		
 	}
 }
 
