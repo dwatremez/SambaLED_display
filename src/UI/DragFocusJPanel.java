@@ -194,6 +194,7 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 			SwingUtilities.convertPointFromScreen(p, myGlass);
 
 			myGlass.setLocation(p);
+			myGlass.setFocus(null, null);
 
 			// Draw Focus
 			if(source.getClass() == InstrumentItem.class && findComponentUnderMouse() != null)
