@@ -19,6 +19,7 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -27,11 +28,14 @@ public class EditPanel extends JPanel {
 	private JPanel optionButtons = new JPanel();
 	private JButton openButton = new JButton("Open");
 	private JButton saveButton = new JButton("Save");
+	private JButton saveAsButton = new JButton("Save as");
 	private JButton launchButton = new JButton("Launch");
 	GridBagConstraints gbc = new GridBagConstraints();
 
 	private JEditorPane textArea = new JEditorPane();
 	private JScrollPane scrollPanel = new JScrollPane(textArea);
+
+	private File openFile; 
 
 	public EditPanel()
 	{
@@ -52,7 +56,10 @@ public class EditPanel extends JPanel {
 
 		configureOptionButton(openButton, 0);
 		configureOptionButton(saveButton, 1);
-		configureOptionButton(launchButton, 2);
+		configureOptionButton(saveAsButton, 2);
+		configureOptionButton(launchButton, 3);
+
+		saveButton.setEnabled(false);
 
 		this.add(optionButtons, BorderLayout.NORTH);
 
@@ -94,6 +101,8 @@ public class EditPanel extends JPanel {
 
 			if(file.exists())
 			{
+				openFile = file;
+				saveButton.setEnabled(true);
 				try ( BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath())))
 				{
 					textArea.setText("");
@@ -117,29 +126,42 @@ public class EditPanel extends JPanel {
 		}
 	}
 
-	public void save()
+	public void saveAs()
 	{
-		JFileChooser fileChoose = new JFileChooser(new File("."));
-
+		JFileChooser fileChoose;
+		
+		if(this.openFile != null)
+			fileChoose = new JFileChooser(openFile);
+		else
+			fileChoose = new JFileChooser(new File("."));
+		
 		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+			save(fileChoose.getSelectedFile());
+	}
+
+	public void save(File f)
+	{
+		if(f.exists())
 		{
-			File file = fileChoose.getSelectedFile();
+			int choice = JOptionPane.showConfirmDialog(null, "Do you want to replace " + openFile.getName() +"?", "Save", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if(choice != JOptionPane.YES_OPTION)
+				return;
+		}
 
-			try ( BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath())))
-			{					
-				writer.write(textArea.getText());
-			}
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-
-			}
+		try ( BufferedWriter writer = new BufferedWriter(new FileWriter(f.getAbsolutePath())))
+		{					
+			writer.write(textArea.getText());
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
 		}
 	}
+
 
 	class OptionButtonListener implements ActionListener
 	{
@@ -148,8 +170,10 @@ public class EditPanel extends JPanel {
 			JButton but = (JButton)arg0.getSource();
 			if(but.getText() == "Open")
 				openFile();		
+			else if(but.getText() == "Save as")
+				saveAs();
 			else if(but.getText() == "Save")
-				save();
+				save(openFile);
 		}		
 	}
 
