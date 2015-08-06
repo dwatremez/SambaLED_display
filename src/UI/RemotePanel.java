@@ -63,7 +63,7 @@ public class RemotePanel extends JPanel{
 			but.setBorderPainted(false);
 			but.setFont(new Font("Tahoma", Font.PLAIN, 38));
 			but.setFocusPainted(false);	
-			but.addMouseListener(new MouseFocusListener(false));
+			but.addMouseListener(new MouseFocusListener());
 			keyPad.add(but);
 			
 			gbc.gridx = i%4;
@@ -78,7 +78,7 @@ public class RemotePanel extends JPanel{
 		triggerButton.setBorderPainted(false);
 		triggerButton.setFocusPainted(false);
 		triggerButton.setBackground(keyGreen);
-		triggerButton.addMouseListener(new MouseFocusListener(false));
+		triggerButton.addMouseListener(new MouseFocusListener());
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
 		gbc.gridy = 5;
@@ -90,7 +90,7 @@ public class RemotePanel extends JPanel{
 		modeButton.setBorderPainted(false);
 		modeButton.setFocusPainted(false);
 		modeButton.setBackground(keyGreen);
-		modeButton.addMouseListener(new MouseFocusListener(false));
+		modeButton.addMouseListener(new MouseFocusListener());
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 2;
 		gbc.gridy = 5;

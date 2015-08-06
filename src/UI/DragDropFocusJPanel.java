@@ -62,7 +62,7 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 	public void setListenersForGlass(MyGlassPanel glass)
 	{
 		this.myGlass = glass;
-		this.addMouseListener(new MouseFocusListener());
+		this.addMouseListener(new MouseFocusListener(backColor));
 		this.addMouseListener(new MouseGlassListener(myGlass));
 		this.addMouseMotionListener(new MouseGlassListener(myGlass));	
 		this.addMouseListener(new MouseDnDropListener());			
@@ -132,7 +132,7 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 	public class MouseGlassListener extends MouseAdapter{
 
 		private MyGlassPanel myGlass;
-		private BufferedImage image;		
+		private BufferedImage image;
 
 		InstrumentLine lineSelected;
 		InstrumentPanel panelSelected;
@@ -359,12 +359,13 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 					InstrumentItem clone = (InstrumentItem)((InstrumentItem)source).clone();
 					clone.resetListenersForGlass();
 
+					int nbInstru = lineSelected.getInstruments().size();
 					lineSelected.addInstrument(clone, getPointInComponent(event, lineSelected));
 					lineSelected.setBackground(lineSelected.getBackColor());
 					lineSelected.repaint();
 
 					// Delete source if Control not pressed
-					if(!event.isControlDown())
+					if(!event.isControlDown() && nbInstru != lineSelected.getInstruments().size())
 						deleteOldItem((InstrumentItem)source);
 				}
 

@@ -6,30 +6,37 @@ import java.awt.event.MouseEvent;
 
 class MouseFocusListener extends MouseAdapter
 {
-	boolean colorish;
+	Color backColor;
 	
 	public MouseFocusListener()
 	{
-		this.colorish = true;		
 	}
 	
-	public MouseFocusListener(boolean colorish)
+	
+	public MouseFocusListener(Color c)
 	{
-		this.colorish = colorish;		
+		this.backColor = c;		
 	}
 	
 	
 	@Override
 	public void mouseEntered(MouseEvent event)
 	{
-		event.getComponent().setBackground(analogColor((event.getComponent().getBackground())));
+		if(backColor == null)
+			event.getComponent().setBackground(analogColor((event.getComponent().getBackground())));
+		else
+			event.getComponent().setBackground(analogColor(backColor));
+			
 		event.getComponent().repaint();
 	}
 
 	@Override
 	public void mouseExited(MouseEvent event) 
 	{
-		event.getComponent().setBackground(analogColor((event.getComponent().getBackground()),2));
+		if(backColor == null)
+			event.getComponent().setBackground(cancelAnalogColor((event.getComponent().getBackground())));
+		else
+			event.getComponent().setBackground(backColor);
 		event.getComponent().repaint();
 	}
 	
@@ -37,11 +44,16 @@ class MouseFocusListener extends MouseAdapter
 	{
 		return analogColor(c, 10);
 	}
+	
+	private Color cancelAnalogColor(Color c)
+	{
+		return analogColor(c, 2);
+	}
 
 	private Color analogColor(Color c, int i)
 	{
 		float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-		if(hsb[1] > 0.1 && colorish)
+		if(hsb[1] > 0.1 && backColor != null)
 			return new Color(Color.HSBtoRGB((float)(hsb[0] + i * 30.0/360.0), hsb[1], hsb[2]));
 		else if(hsb[2] < 0.4 || (hsb[2] > 0.4 && i == 2))
 			return c.brighter();
