@@ -37,7 +37,7 @@ public class EditPanel extends JPanel {
 
 	private File openFile; 
 
-	private Color metalBlue = Color.decode("#90A4AE");
+	private Color backColor = Color.decode("#616161");
 
 	public EditPanel()
 	{
@@ -56,7 +56,7 @@ public class EditPanel extends JPanel {
 		this.add(scrollPanel, BorderLayout.CENTER);
 
 		optionButtons.setLayout(new GridBagLayout());
-		optionButtons.setBackground(metalBlue);
+		optionButtons.setBackground(backColor);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 
@@ -64,8 +64,6 @@ public class EditPanel extends JPanel {
 		configureOptionButton(saveButton, 1);
 		configureOptionButton(saveAsButton, 2);
 		configureOptionButton(launchButton, 3);
-
-		saveButton.setEnabled(false);
 
 		this.add(optionButtons, BorderLayout.SOUTH);
 
@@ -77,7 +75,8 @@ public class EditPanel extends JPanel {
 		but.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		but.setBorderPainted(false);
 		but.setFocusPainted(false);
-		but.setBackground(Color.decode("#90A4AE"));
+		but.setForeground(Color.LIGHT_GRAY);
+		but.setBackground(backColor);
 		but.setPreferredSize(new Dimension(100,(int)(70*0.6)));
 		but.addMouseListener(new MouseFocusListener(but.getBackground()));
 		gbc.gridx = pos;
@@ -110,7 +109,6 @@ public class EditPanel extends JPanel {
 			if(file.exists())
 			{
 				openFile = file;
-				saveButton.setEnabled(true);
 				try ( BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath())))
 				{
 					textArea.setText("");
@@ -182,7 +180,12 @@ public class EditPanel extends JPanel {
 			else if(but.getText() == "Save as")
 				saveAs();
 			else if(but.getText() == "Save")
-				save(openFile);
+			{
+				if(openFile != null)
+					save(openFile);
+				else
+					saveAs();
+			}
 		}		
 	}
 

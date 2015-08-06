@@ -30,7 +30,7 @@ public class RemotePanel extends JPanel{
 	private Color keyBlue = Color.decode("#90CAF9");
 	private Color keyRed = Color.decode("#EF9A9A");
 	private Color keyGreen = Color.decode("#C5E1A5");
-	private Color metalBlue = Color.decode("#90A4AE");
+	private Color backColor = Color.decode("#616161");
 
 	public RemotePanel()
 	{
@@ -41,10 +41,11 @@ public class RemotePanel extends JPanel{
 		gbc.gridy = 0;
 		gbc.weightx = 1.0;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		remoteVisibilityButton.setBackground(metalBlue);
+		remoteVisibilityButton.setBackground(backColor);
 		remoteVisibilityButton.setBorderPainted(false);
 		remoteVisibilityButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		remoteVisibilityButton.setFocusPainted(false);	
+		remoteVisibilityButton.setForeground(Color.LIGHT_GRAY);
 		remoteVisibilityButton.setPreferredSize(new Dimension(100,(int)(70*0.6)));
 		remoteVisibilityButton.addActionListener(new VisibilityListener());
 		remoteVisibilityButton.addMouseListener(new MouseFocusListener(remoteVisibilityButton.getBackground()));
