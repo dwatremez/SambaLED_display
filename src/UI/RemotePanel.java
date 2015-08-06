@@ -7,9 +7,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 
@@ -39,6 +42,7 @@ public class RemotePanel extends JPanel{
 		gbc.weightx = 1.0;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		remoteVisibilityButton.addActionListener(new VisibilityListener());
+		remoteVisibilityButton.addMouseListener(new MouseFocusListener());
 		remoteVisibilityButton.setBackground(metalBlue);
 		remoteVisibilityButton.setBorderPainted(false);
 		remoteVisibilityButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -107,7 +111,7 @@ public class RemotePanel extends JPanel{
 		triggerButton.setVisible(!triggerButton.isVisible());
 		modeButton.setVisible(!modeButton.isVisible());
 	}
-	
+		
 	class VisibilityListener implements ActionListener
 	{
 

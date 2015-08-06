@@ -6,7 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class InstrumentItem extends DragFocusJPanel {
+public class InstrumentItem extends DragDropFocusJPanel {
 
 	private String name = "Luc";
 	private String type = "Caixa";

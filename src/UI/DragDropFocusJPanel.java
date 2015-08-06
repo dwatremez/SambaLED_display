@@ -20,19 +20,19 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 
-public class DragFocusJPanel extends JPanel implements Cloneable{
+public class DragDropFocusJPanel extends JPanel implements Cloneable{
 
 	private MyGlassPanel myGlass;
 
 	protected Color backColor = Color.gray;
 
-	public DragFocusJPanel()
+	public DragDropFocusJPanel()
 	{
 		super();
 		init();
 	}
 
-	public DragFocusJPanel(Color backColor)
+	public DragDropFocusJPanel(Color backColor)
 	{
 		super();
 		this.backColor = backColor;
@@ -62,6 +62,7 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 	public void setListenersForGlass(MyGlassPanel glass)
 	{
 		this.myGlass = glass;
+		this.addMouseListener(new MouseFocusListener());
 		this.addMouseListener(new MouseGlassListener(myGlass));
 		this.addMouseMotionListener(new MouseGlassListener(myGlass));	
 		this.addMouseListener(new MouseDnDropListener());			
@@ -138,17 +139,6 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 
 		public MouseGlassListener(MyGlassPanel glass){
 			myGlass = glass;
-		}
-		@Override
-		public void mouseEntered(MouseEvent event) {	
-			setBackground(analogColor(backColor));						
-			repaint();
-		}
-
-		@Override
-		public void mouseExited(MouseEvent event) {
-			setBackground(backColor);
-			repaint();
 		}
 
 		public void mousePressed(MouseEvent event) {
