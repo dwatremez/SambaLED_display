@@ -23,7 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class EditPanel extends JPanel {
+public class EditPanel extends JPanel {	
+
+	private Color metalBlue = Color.decode("#90A4AE");
 
 	private JPanel optionButtons = new JPanel();
 	private JButton openButton = new JButton("Open");
@@ -45,12 +47,14 @@ public class EditPanel extends JPanel {
 		textArea.setPreferredSize(new Dimension(550,100));
 		textArea.setBackground(Color.DARK_GRAY);
 		textArea.setForeground(Color.LIGHT_GRAY);
+		scrollPanel.setBorder(null);
 
 		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
 		this.add(scrollPanel, BorderLayout.CENTER);
 
 		optionButtons.setLayout(new GridBagLayout());
+		optionButtons.setBackground(metalBlue);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 
@@ -61,7 +65,7 @@ public class EditPanel extends JPanel {
 
 		saveButton.setEnabled(false);
 
-		this.add(optionButtons, BorderLayout.NORTH);
+		this.add(optionButtons, BorderLayout.SOUTH);
 
 	}
 
@@ -71,7 +75,8 @@ public class EditPanel extends JPanel {
 		but.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		but.setBorderPainted(false);
 		but.setFocusPainted(false);
-		but.setBackground(Color.GRAY);
+		but.setBackground(Color.decode("#90A4AE"));
+		but.setPreferredSize(new Dimension(100,(int)(70*0.6)));
 		gbc.gridx = pos;
 		optionButtons.add(but, gbc);		
 	}
