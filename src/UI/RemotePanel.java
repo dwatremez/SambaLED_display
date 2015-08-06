@@ -18,11 +18,6 @@ import javax.swing.JPanel;
 
 public class RemotePanel extends JPanel{
 
-	private Color keyBlue = Color.decode("#42A5F5");
-	private Color keyRed = Color.decode("#EF5350");
-	private Color keyGreen = Color.decode("#9CCC65");
-	private Color metalBlue = Color.decode("#90A4AE");
-
 	private ArrayList<JButton> keyPad = new ArrayList<>();
 	private String[] keyPadLabel = {"1", "2", "3", "A", "4", "5", "6", "B", "7", "8", "9", "C", "*", "0", "#", "D"}; 
 	GridBagConstraints gbc = new GridBagConstraints();
@@ -31,6 +26,11 @@ public class RemotePanel extends JPanel{
 
 	private JButton triggerButton = new JButton("Send");
 	private JButton modeButton = new JButton("Mode");
+
+	private Color keyBlue = Color.decode("#90CAF9");
+	private Color keyRed = Color.decode("#EF9A9A");
+	private Color keyGreen = Color.decode("#C5E1A5");
+	private Color metalBlue = Color.decode("#90A4AE");
 
 	public RemotePanel()
 	{
@@ -63,6 +63,7 @@ public class RemotePanel extends JPanel{
 			but.setBorderPainted(false);
 			but.setFont(new Font("Tahoma", Font.PLAIN, 38));
 			but.setFocusPainted(false);	
+			but.addMouseListener(new MouseFocusListener(false));
 			keyPad.add(but);
 			
 			gbc.gridx = i%4;
@@ -77,6 +78,7 @@ public class RemotePanel extends JPanel{
 		triggerButton.setBorderPainted(false);
 		triggerButton.setFocusPainted(false);
 		triggerButton.setBackground(keyGreen);
+		triggerButton.addMouseListener(new MouseFocusListener(false));
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
 		gbc.gridy = 5;
@@ -88,6 +90,7 @@ public class RemotePanel extends JPanel{
 		modeButton.setBorderPainted(false);
 		modeButton.setFocusPainted(false);
 		modeButton.setBackground(keyGreen);
+		modeButton.addMouseListener(new MouseFocusListener(false));
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 2;
 		gbc.gridy = 5;

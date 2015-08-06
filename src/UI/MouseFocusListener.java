@@ -6,6 +6,19 @@ import java.awt.event.MouseEvent;
 
 class MouseFocusListener extends MouseAdapter
 {
+	boolean colorish;
+	
+	public MouseFocusListener()
+	{
+		this.colorish = true;		
+	}
+	
+	public MouseFocusListener(boolean colorish)
+	{
+		this.colorish = colorish;		
+	}
+	
+	
 	@Override
 	public void mouseEntered(MouseEvent event)
 	{
@@ -28,11 +41,12 @@ class MouseFocusListener extends MouseAdapter
 	private Color analogColor(Color c, int i)
 	{
 		float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-		if(hsb[1] > 0.1)
+		if(hsb[1] > 0.1 && colorish)
 			return new Color(Color.HSBtoRGB((float)(hsb[0] + i * 30.0/360.0), hsb[1], hsb[2]));
-		else if(hsb[2] < 0.4)
+		else if(hsb[2] < 0.4 || (hsb[2] > 0.4 && i == 2))
 			return c.brighter();
-		else
+		else if(hsb[2] > 0.4 || (hsb[2] < 0.4 && i == 2))
 			return c.darker();
+		return c;
 	}		
 }

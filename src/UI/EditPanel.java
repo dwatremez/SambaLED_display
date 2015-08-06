@@ -25,8 +25,6 @@ import javax.swing.JScrollPane;
 
 public class EditPanel extends JPanel {	
 
-	private Color metalBlue = Color.decode("#90A4AE");
-
 	private JPanel optionButtons = new JPanel();
 	private JButton openButton = new JButton("Open");
 	private JButton saveButton = new JButton("Save");
@@ -38,6 +36,8 @@ public class EditPanel extends JPanel {
 	private JScrollPane scrollPanel = new JScrollPane(textArea);
 
 	private File openFile; 
+
+	private Color metalBlue = Color.decode("#90A4AE");
 
 	public EditPanel()
 	{
