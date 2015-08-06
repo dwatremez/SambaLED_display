@@ -47,6 +47,8 @@ public class EditPanel extends JPanel {
 		textArea.setPreferredSize(new Dimension(550,100));
 		textArea.setBackground(Color.DARK_GRAY);
 		textArea.setForeground(Color.LIGHT_GRAY);
+		textArea.setCaretColor(Color.LIGHT_GRAY);
+		
 		scrollPanel.setBorder(null);
 
 		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -119,6 +121,7 @@ public class EditPanel extends JPanel {
 						all += line + "\n";
 					}
 					textArea.setText(all);
+					textArea.setCaretPosition(0);
 				}
 				catch (FileNotFoundException e) 
 				{
