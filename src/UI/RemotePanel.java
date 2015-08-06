@@ -41,13 +41,13 @@ public class RemotePanel extends JPanel{
 		gbc.gridy = 0;
 		gbc.weightx = 1.0;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		remoteVisibilityButton.addActionListener(new VisibilityListener());
-		remoteVisibilityButton.addMouseListener(new MouseFocusListener());
 		remoteVisibilityButton.setBackground(metalBlue);
 		remoteVisibilityButton.setBorderPainted(false);
 		remoteVisibilityButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		remoteVisibilityButton.setFocusPainted(false);	
 		remoteVisibilityButton.setPreferredSize(new Dimension(100,(int)(70*0.6)));
+		remoteVisibilityButton.addActionListener(new VisibilityListener());
+		remoteVisibilityButton.addMouseListener(new MouseFocusListener(remoteVisibilityButton.getBackground()));
 		this.add(remoteVisibilityButton, gbc);
 		
 

@@ -77,7 +77,7 @@ public class EditPanel extends JPanel {
 		but.setFocusPainted(false);
 		but.setBackground(Color.decode("#90A4AE"));
 		but.setPreferredSize(new Dimension(100,(int)(70*0.6)));
-		but.addMouseListener(new MouseFocusListener());
+		but.addMouseListener(new MouseFocusListener(but.getBackground()));
 		gbc.gridx = pos;
 		optionButtons.add(but, gbc);		
 	}
