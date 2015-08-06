@@ -165,6 +165,12 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 			Graphics g = image.getGraphics();
 			composant.paint(g);
 
+			// Print copy if CTRL pressed
+			if(event.isControlDown())
+				myGlass.setString("Copy");
+			else
+				myGlass.setString("");
+
 			myGlass.setLocation(location);
 			myGlass.setImage(image);
 			myGlass.setVisible(true);
@@ -203,7 +209,12 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
 				{
 					myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-					myGlass.setString("");
+
+					// Print copy if CTRL pressed
+					if(event.isControlDown())
+						myGlass.setString("Copy");
+					else
+						myGlass.setString("");
 					//System.out.println("Dragged on Line");
 					if(!lineSelected.getInstruments().isEmpty())
 					{
@@ -362,8 +373,9 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 					lineSelected.setBackground(lineSelected.getBackColor());
 					lineSelected.repaint();
 
-					// Delete source
-					deleteOldItem((InstrumentItem)source);
+					// Delete source if Control not pressed
+					if(!event.isControlDown())
+						deleteOldItem((InstrumentItem)source);
 				}
 
 				// Move and Copy InstrumentItem in new Line in InstrumentPanel
@@ -377,8 +389,9 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 					panelSelected.addLine(lineSelected,getPointInComponent(event, panelSelected.getInstrumentLinesPanel()));
 					panelSelected.repaint();
 
-					// Delete source
-					deleteOldItem((InstrumentItem)source);
+					// Delete source if Control not pressed
+					if(!event.isControlDown())
+						deleteOldItem((InstrumentItem)source);
 				}
 			}
 		}
@@ -393,7 +406,7 @@ public class DragFocusJPanel extends JPanel implements Cloneable{
 		}
 
 		public void deleteOldItem(InstrumentItem source)
-		{
+		{			
 			InstrumentLine sourceLine;
 			InstrumentPanel panel;
 			if(source.getParent().getParent() != null)
