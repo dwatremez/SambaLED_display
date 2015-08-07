@@ -145,7 +145,7 @@ public class EditPanel extends JPanel {
 
 		fileChoose.setFileFilter(new FileNameExtensionFilter("Arduino files (.ino)", "ino"));
 		
-		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+		if (fileChoose.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) 
 		{
 			File fileToSave = fileChoose.getSelectedFile();
 			if(!fileChoose.getSelectedFile().getAbsolutePath().endsWith(".ino"))

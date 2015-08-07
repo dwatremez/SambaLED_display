@@ -288,7 +288,7 @@ public class InstrumentPanel extends JPanel {
 
 		fileChoose.setFileFilter(new FileNameExtensionFilter("Batucada files (.batuc)", "batuc"));
 		
-		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+		if (fileChoose.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) 
 		{
 			File fileToSave = fileChoose.getSelectedFile();
 			if(!fileChoose.getSelectedFile().getAbsolutePath().endsWith(".batuc"))
