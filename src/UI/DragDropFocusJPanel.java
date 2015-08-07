@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 
@@ -127,7 +128,7 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 
 		return null;
 	}
-	
+
 	public void deleteItemAndEmptyLine(InstrumentItem source)
 	{			
 		InstrumentLine sourceLine;
@@ -209,16 +210,17 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 		{			
 			Component source = event.getComponent();
 
-			Point p = (Point) event.getPoint().clone();
-			SwingUtilities.convertPointToScreen(p, source);
-			SwingUtilities.convertPointFromScreen(p, myGlass);
+			Point pg = (Point) event.getPoint().clone();
+			SwingUtilities.convertPointToScreen(pg, source);
+			SwingUtilities.convertPointFromScreen(pg, myGlass);
 
-			myGlass.setLocation(p);
+			myGlass.setLocation(pg);
 			myGlass.setFocus(null, null);
 
 			// Draw Focus
 			if(source.getClass() == InstrumentItem.class && findComponentUnderMouse() != null)
 			{
+				Point p = (Point)pg.clone();
 				// Draw focus on Line
 				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
 				{
@@ -262,14 +264,21 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 							Point p0 = new Point();
 							Point p1 = new Point();
 							if(position == 0)
-								p0.setLocation(lineSelected.getLabel().getWidth(), lineSelected.getY());
+								p0.setLocation(0, lineSelected.getY());
 							else
-								p0.setLocation(lineSelected.getLabel().getWidth() + lineSelected.getInstruments().get(position-1).getX() + lineSelected.getInstruments().get(position-1).getWidth(), lineSelected.getY());
+								p0.setLocation(lineSelected.getInstruments().get(position-1).getX() + lineSelected.getInstruments().get(position-1).getWidth(), lineSelected.getY());
 
 							if(position == lineSelected.getInstruments().size())
-								p1.setLocation(lineSelected.getWidth() - p0.getX(), lineSelected.getHeight());
+								p1.setLocation(lineSelected.getWidth(), lineSelected.getHeight());							
 							else
-								p1.setLocation(lineSelected.getLabel().getWidth() + lineSelected.getInstruments().get(position).getX() - p0.getX(), lineSelected.getHeight());
+								p1.setLocation(lineSelected.getLabel().getWidth() + lineSelected.getInstruments().get(position).getX(), lineSelected.getHeight());
+
+							p0.setLocation(p0.getX() + lineSelected.getLabel().getWidth(), p0.getY() - findInstrumentPanel(findComponentUnderMouse()).getScroll());
+							p1.setLocation(p1.getX() - p0.getX(), p1.getY());
+
+
+							if(p0.getY() + p1.getY() > findInstrumentPanel(findComponentUnderMouse()).getScrollPanel().getHeight())
+								p1.setLocation(p1.getX(), findInstrumentPanel(findComponentUnderMouse()).getScrollPanel().getHeight() - p0.getY());
 
 							Point[] focusP = {p0, p1};
 							myGlass.setFocus(focusP, analogColor(lineSelected.getBackColor(),2));	
@@ -280,21 +289,19 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 				// Draw focus on Panel
 				else if((panelSelected =  findInstrumentPanel(findComponentUnderMouse()))!= null)
 				{
-					myGlass.setString("New line");
-					myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 					//System.out.println("Dragged on Panel: ");
 					if(!panelSelected.getLines().isEmpty())
 					{
 						int position = 0;
 						boolean inPanel = false;
-						if(p.getY() < panelSelected.getInstrumentLinesPanel().getHeight())
+						if(p.getY() < panelSelected.getScrollPanel().getHeight())
 						{
 							position = panelSelected.getLines().size();
 							inPanel = true;
 						}
 						for(int i = 0; i<panelSelected.getLines().size(); i++)
 						{
-							if(p.getY() < panelSelected.getLines().get(i).getY())
+							if(p.getY() < panelSelected.getLines().get(i).getY()  - panelSelected.getScroll())
 							{
 								position = i;
 								break;
@@ -303,6 +310,8 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 
 						if(inPanel)
 						{
+							myGlass.setString("New line");
+							myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 							Point p0 = new Point();
 							Point p1 = new Point();
 							if(position == 0)
@@ -311,9 +320,14 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 								p0.setLocation(0, panelSelected.getLines().get(position-1).getY() + panelSelected.getLines().get(position-1).getHeight());
 
 							if(position == panelSelected.getLines().size())
-								p1.setLocation(panelSelected.getInstrumentLinesPanel().getWidth(), panelSelected.getInstrumentLinesPanel().getHeight() - p0.getY());
+								p1.setLocation(panelSelected.getScrollPanel().getWidth(), panelSelected.getScrollPanel().getHeight() - p0.getY());
 							else
-								p1.setLocation(panelSelected.getInstrumentLinesPanel().getWidth(), panelSelected.getLines().get(position).getY() - p0.getY());
+								p1.setLocation(panelSelected.getScrollPanel().getWidth(), panelSelected.getLines().get(position).getY() - p0.getY());
+
+							p0.setLocation(p0.getX(), p0.getY() - panelSelected.getScroll());
+
+							if(p0.getY() + p1.getY() > panelSelected.getScrollPanel().getHeight())
+								p1.setLocation(p1.getX(), panelSelected.getScrollPanel().getHeight() - p0.getY());
 
 							Point[] focusP = {p0, p1};
 							myGlass.setFocus(focusP, analogColor(panelSelected.getBackColor()));		
@@ -321,28 +335,30 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 					}
 					else
 					{
-						Point p0 = new Point();
-						Point p1 = new Point();
-						p0.setLocation(0, 0);
-						p1.setLocation(panelSelected.getInstrumentLinesPanel().getWidth(), panelSelected.getInstrumentLinesPanel().getHeight() - p0.getY());
+						if(p.getY() < panelSelected.getScrollPanel().getHeight())
+						{		
+							myGlass.setString("New line");
+							myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));				
 
-						Point[] focusP = {p0, p1};
-						myGlass.setFocus(focusP, analogColor(panelSelected.getBackColor()));	
+							Point p0 = new Point();
+							Point p1 = new Point();
+							p0.setLocation(0, 0);
+							p1.setLocation(panelSelected.getScrollPanel().getWidth(), panelSelected.getScrollPanel().getHeight());
+
+							Point[] focusP = {p0, p1};
+							myGlass.setFocus(focusP, analogColor(panelSelected.getBackColor()));
+						}
+						else
+						{
+							myGlass.setString("");
+							myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));								
+						}
 					}
 				}
 			}
 			myGlass.repaint();			
 		}
 
-		public Point getPointInComponent(MouseEvent e, Component c)
-		{
-			Point p = (Point) e.getPoint().clone();
-			SwingUtilities.convertPointToScreen(p, e.getComponent());
-			SwingUtilities.convertPointFromScreen(p, c);
-			//System.out.println(p);
-			return p;
-		}
-		
 		private Color analogColor(Color c)
 		{
 			return analogColor(c, 10);
