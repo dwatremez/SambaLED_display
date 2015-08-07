@@ -29,7 +29,6 @@ public class InstrumentDialog extends JDialog {
 	InstrumentItem myItem;
 	boolean loaded = false;
 
-
 	JPanel optionPanel = new JPanel();
 	GridBagConstraints gbc = new GridBagConstraints();
 	JLabel nameLabel = new JLabel("Musician: ");
@@ -50,30 +49,28 @@ public class InstrumentDialog extends JDialog {
 	JButton okButton = new JButton("OK");
 	JButton cancelButton = new JButton("Cancel");
 
-
-	public InstrumentDialog(JFrame parent, String title, boolean modal, InstrumentItem i)
-	{
+	public InstrumentDialog(JFrame parent, String title, boolean modal,
+			InstrumentItem i) {
 		super(parent, title, modal);
-		myItem = new InstrumentItem(i.getName(), i.getType(), i.getShape(), i.getPixelNb());
+		myItem = new InstrumentItem(i.getName(), i.getType(), i.getShape(),
+				i.getPixelNb());
 		init();
 	}
 
-	public InstrumentDialog(JFrame parent, String title, boolean modal)
-	{		
+	public InstrumentDialog(JFrame parent, String title, boolean modal) {
 		super(parent, title, modal);
 		init();
 	}
 
-	private void init()
-	{		
+	private void init() {
 		this.setSize(450, 300);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		
+
 		this.getRootPane().setDefaultButton(okButton);
-				
+
 		optionPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 		optionPanel.setLayout(new GridBagLayout());
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -85,9 +82,9 @@ public class InstrumentDialog extends JDialog {
 		// Name
 		optionPanel.add(nameLabel, gbc);
 		gbc.gridx++;
-		optionPanel.add(nameText,gbc);
+		optionPanel.add(nameText, gbc);
 		nameText.getDocument().addDocumentListener(new DocListener());
-		if(myItem != null)
+		if (myItem != null)
 			nameText.setText(myItem.getName());
 
 		// Type
@@ -108,7 +105,7 @@ public class InstrumentDialog extends JDialog {
 		gbc.gridx++;
 		optionPanel.add(typeBox, gbc);
 		typeBox.addActionListener(new EntryListener());
-		if(myItem != null)
+		if (myItem != null)
 			typeBox.setSelectedItem(myItem.getType());
 
 		// Shape
@@ -127,10 +124,8 @@ public class InstrumentDialog extends JDialog {
 		gbc.gridx++;
 		optionPanel.add(tripleBarShapeRadio, gbc);
 		tripleBarShapeRadio.addActionListener(new EntryListener());
-		if(myItem != null)
-		{
-			switch(myItem.getShape())
-			{
+		if (myItem != null) {
+			switch (myItem.getShape()) {
 			case "Circle":
 				circleShapeRadio.setSelected(true);
 				break;
@@ -140,7 +135,7 @@ public class InstrumentDialog extends JDialog {
 			case "Triple Bar":
 				tripleBarShapeRadio.setSelected(true);
 				break;
-			default:						
+			default:
 			}
 		}
 
@@ -150,19 +145,18 @@ public class InstrumentDialog extends JDialog {
 		optionPanel.add(pixelNbLabel, gbc);
 		gbc.gridx++;
 		optionPanel.add(pixelNbText, gbc);
-		//pixelNbText.getDocument().addDocumentListener(new DocListener());
+		// pixelNbText.getDocument().addDocumentListener(new DocListener());
 		pixelNbText.addKeyListener(new NumericKeyListener());
-		if(myItem != null)
-		{
+		if (myItem != null) {
 			String str = String.valueOf(myItem.getPixelNb());
 			pixelNbText.setText(str);
 		}
 
-
 		this.add(optionPanel, BorderLayout.CENTER);
 
 		// Quick view
-		instrumentItemPanel.setBorder(BorderFactory.createTitledBorder("Quick View"));
+		instrumentItemPanel.setBorder(BorderFactory
+				.createTitledBorder("Quick View"));
 		instrumentItemPanel.add(myItem);
 		instrumentItemPanel.setBackground(Color.gray);
 		this.add(instrumentItemPanel, BorderLayout.NORTH);
@@ -170,29 +164,25 @@ public class InstrumentDialog extends JDialog {
 		// Control Panel
 		controlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		controlPanel.add(okButton);
-		okButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0)
-			{
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				sendData = true;
 				setVisible(false);
 			}
 		});
 		controlPanel.add(cancelButton);
-		cancelButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0)
-			{
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				setVisible(false);
 			}
 		});
 		this.add(controlPanel, BorderLayout.SOUTH);
-		
+
 		loaded = true;
 	}
 
-	public void setDefaultFromType(String type)
-	{
-		switch(type)
-		{
+	public void setDefaultFromType(String type) {
+		switch (type) {
 		case "Agogo":
 			pixelNbText.setText(String.valueOf(10));
 			tripleBarShapeRadio.setSelected(true);
@@ -206,107 +196,104 @@ public class InstrumentDialog extends JDialog {
 		case "Surdo 3":
 			pixelNbText.setText(String.valueOf(42));
 			circleShapeRadio.setSelected(true);
-			break;			
+			break;
 		case "Caixa":
 		case "Repique":
-		case "Tarol":	
+		case "Tarol":
 		case "Cuica":
 			pixelNbText.setText(String.valueOf(28));
 			circleShapeRadio.setSelected(true);
-			break;			
+			break;
 		case "Tamborim":
 			pixelNbText.setText(String.valueOf(13));
 			circleShapeRadio.setSelected(true);
-			break;		
+			break;
 		case "Balloon":
 			pixelNbText.setText(String.valueOf(40));
 			circleShapeRadio.setSelected(true);
-			break;			
+			break;
 		default:
 		}
 	}
 
-	private void updateInstrument()
-	{
-		if(myItem != null && loaded)
-		{
+	private void updateInstrument() {
+		if (myItem != null && loaded) {
 			myItem.setName(nameText.getText());
-			if(myItem.getType() != typeBox.getSelectedItem().toString())
+			if (myItem.getType() != typeBox.getSelectedItem().toString())
 				setDefaultFromType(typeBox.getSelectedItem().toString());
 			myItem.setType(typeBox.getSelectedItem().toString());
-			if(!pixelNbText.getText().isEmpty())
+			if (!pixelNbText.getText().isEmpty())
 				myItem.setPixelNb(Integer.valueOf(pixelNbText.getText()));
 			else
 				myItem.setPixelNb(0);
-			if(circleShapeRadio.isSelected())
+			if (circleShapeRadio.isSelected())
 				myItem.setShape(circleShapeRadio.getText());
-			if(barShapeRadio.isSelected())
+			if (barShapeRadio.isSelected())
 				myItem.setShape(barShapeRadio.getText());
-			if(tripleBarShapeRadio.isSelected())
+			if (tripleBarShapeRadio.isSelected())
 				myItem.setShape(tripleBarShapeRadio.getText());
 
 			myItem.repaint();
 		}
-			
+
 	}
 
-	public InstrumentItem showZDialog()
-	{
+	public InstrumentItem showZDialog() {
 		this.sendData = false;
 		this.setVisible(true);
-		return (this.sendData)? myItem : null;
+		return (this.sendData) ? myItem : null;
 	}
 
-	class EntryListener implements ActionListener
-	{
+	class EntryListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			updateInstrument();
-		}		
-	}	
+		}
+	}
 
-	class DocListener implements DocumentListener
-	{
+	class DocListener implements DocumentListener {
 		@Override
-		public void changedUpdate(DocumentEvent arg0) {}
+		public void changedUpdate(DocumentEvent arg0) {
+		}
 
 		@Override
 		public void insertUpdate(DocumentEvent arg0) {
-			updateInstrument();			
+			updateInstrument();
 		}
 
 		@Override
 		public void removeUpdate(DocumentEvent arg0) {
-			updateInstrument();			
-		}		
-	}	
-	
-	class NumericKeyListener implements KeyListener
-	{
+			updateInstrument();
+		}
+	}
+
+	class NumericKeyListener implements KeyListener {
 
 		@Override
-		public void keyPressed(KeyEvent arg0) {}
-
-		@Override
-		public void keyReleased(KeyEvent arg0) 
-		{
-		    if(!isNumeric(arg0.getKeyChar()))
-		    	((JTextField)arg0.getSource()).setText(((JTextField)arg0.getSource()).getText().replace(String.valueOf(arg0.getKeyChar()), ""));
-		    updateInstrument();
+		public void keyPressed(KeyEvent arg0) {
 		}
 
 		@Override
-		public void keyTyped(KeyEvent arg0) {}
-		
-	    private boolean isNumeric(char carac){
-	        try {
-	          Integer.parseInt(String.valueOf(carac));
-	        }
-	        catch (NumberFormatException e) {
-	          return false;            
-	        }
-	        return true;
-	      }
-		
+		public void keyReleased(KeyEvent arg0) {
+			if (!isNumeric(arg0.getKeyChar()))
+				((JTextField) arg0.getSource()).setText(((JTextField) arg0
+						.getSource()).getText().replace(
+						String.valueOf(arg0.getKeyChar()), ""));
+			updateInstrument();
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+		}
+
+		private boolean isNumeric(char carac) {
+			try {
+				Integer.parseInt(String.valueOf(carac));
+			} catch (NumberFormatException e) {
+				return false;
+			}
+			return true;
+		}
+
 	}
 }

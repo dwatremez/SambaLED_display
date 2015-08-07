@@ -18,14 +18,20 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class EditPanel extends JPanel {	
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Style;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
+public class EditPanel extends JPanel {
 
 	private JPanel optionButtons = new JPanel();
 	private JButton openButton = new JButton("Open");
@@ -34,32 +40,51 @@ public class EditPanel extends JPanel {
 	private JButton launchButton = new JButton("Launch");
 	GridBagConstraints gbc = new GridBagConstraints();
 
-	private JEditorPane textArea = new JEditorPane();
-	private JScrollPane scrollPanel = new JScrollPane(textArea);
+	private RSyntaxTextArea textArea = new RSyntaxTextArea();
+	private RTextScrollPane scrollPanel = new RTextScrollPane(textArea);
 
-	private File openFile; 
+	private File openFile;
 
 	private Color backColor = Color.decode("#616161");
 
-	public EditPanel()
-	{
+	public EditPanel() {
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.GRAY);
 
-		textArea.setPreferredSize(new Dimension(550,100));
+		textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+		textArea.setCodeFoldingEnabled(true);
 		textArea.setBackground(Color.DARK_GRAY);
 		textArea.setForeground(Color.LIGHT_GRAY);
 		textArea.setCaretColor(Color.LIGHT_GRAY);
+		textArea.setCurrentLineHighlightColor(textArea.getBackground().brighter());
+		textArea.setMarginLineColor(Color.DARK_GRAY);
+		textArea.setLineWrap(true);
 		
+		SyntaxScheme sc = textArea.getSyntaxScheme();
+	    sc.getStyle(TokenTypes.MARKUP_TAG_NAME).foreground = Color.yellow;
+		
+	    sc.getStyle(TokenTypes.LITERAL_NUMBER_DECIMAL_INT).foreground = Color.decode("#AED581");
+	    sc.getStyle(TokenTypes.RESERVED_WORD).foreground = Color.decode("#FFD54F");
+	    sc.getStyle(TokenTypes.RESERVED_WORD_2).foreground = Color.decode("#FFD54F");
+	    sc.getStyle(TokenTypes.OPERATOR).foreground = Color.decode("#F5F5F5");
+	    sc.getStyle(TokenTypes.SEPARATOR).foreground = Color.decode("#90A4AE");
+	    sc.getStyle(TokenTypes.LITERAL_NUMBER_HEXADECIMAL).foreground = Color.decode("#9575CD");
+	    sc.getStyle(TokenTypes.COMMENT_EOL).foreground = Color.decode("#7986CB");
+	    
+	    scrollPanel.getGutter().setBackground(backColor);
+	    scrollPanel.getGutter().setLineNumberColor(Color.LIGHT_GRAY);
+	    
+		scrollPanel.setPreferredSize(new Dimension(600,100));
 		scrollPanel.setBorder(null);
 
 		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
+		scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
 		this.add(scrollPanel, BorderLayout.CENTER);
-		
+
 		scrollPanel.getVerticalScrollBar().setUnitIncrement(5);
 
 		optionButtons.setLayout(new GridBagLayout());
+		optionButtons.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.white));
 		optionButtons.setBackground(backColor);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
@@ -68,137 +93,119 @@ public class EditPanel extends JPanel {
 		configureOptionButton(saveButton, 1);
 		configureOptionButton(saveAsButton, 2);
 		configureOptionButton(launchButton, 3);
-		
+
 		this.add(optionButtons, BorderLayout.SOUTH);
 
 	}
 
-	private void configureOptionButton(JButton but, int pos)
-	{
+	private void configureOptionButton(JButton but, int pos) {
 		but.addActionListener(new OptionButtonListener());
 		but.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		but.setBorderPainted(false);
 		but.setFocusPainted(false);
 		but.setForeground(Color.LIGHT_GRAY);
 		but.setBackground(backColor);
-		but.setPreferredSize(new Dimension(100,(int)(70*0.6)));
+		but.setPreferredSize(new Dimension(100, (int) (70 * 0.6)));
 		but.addMouseListener(new MouseFocusListener(but.getBackground()));
 		gbc.gridx = pos;
-		optionButtons.add(but, gbc);		
+		optionButtons.add(but, gbc);
 	}
 
-	private String filterLine(String line)
-	{
-		if(line.startsWith("#"))
-		{
-			if(line.startsWith("define", 1))
+	private String filterLine(String line) {
+		if (line.startsWith("#")) {
+			if (line.startsWith("define", 1))
 				return line + "\n";
 			else
 				return "";
 		}
 
-
 		return line + "\n";
 	}
 
-	public void openFile()
-	{
+	public void openFile() {
 		JFileChooser fileChoose = new JFileChooser(new File("."));
-		fileChoose.setFileFilter(new FileNameExtensionFilter("Arduino files (.ino)", "ino"));
+		fileChoose.setFileFilter(new FileNameExtensionFilter(
+				"Arduino files (.ino)", "ino"));
 		File file;
 
-		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
-		{
+		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			file = fileChoose.getSelectedFile();
 
-			if(file.exists())
-			{
+			if (file.exists()) {
 				openFile = file;
-				try ( BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath())))
-				{
+				try (BufferedReader reader = new BufferedReader(new FileReader(
+						file.getAbsolutePath()))) {
 					String line;
 					String all = "";
-					while((line = reader.readLine()) != null)
-					{
+					while ((line = reader.readLine()) != null) {
 						all += line + "\n";
 					}
 					textArea.setText(all);
 					textArea.setCaretPosition(0);
-				}
-				catch (FileNotFoundException e) 
-				{
+				} catch (FileNotFoundException e) {
 					e.printStackTrace();
-				} 
-				catch (IOException e) 
-				{
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}
 	}
 
-	public void saveAs()
-	{
+	public void saveAs() {
 		JFileChooser fileChoose;
-		
-		if(this.openFile != null)
+
+		if (this.openFile != null)
 			fileChoose = new JFileChooser(openFile);
 		else
 			fileChoose = new JFileChooser(new File("."));
 
-		fileChoose.setFileFilter(new FileNameExtensionFilter("Arduino files (.ino)", "ino"));
-		
-		if (fileChoose.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) 
-		{
+		fileChoose.setFileFilter(new FileNameExtensionFilter(
+				"Arduino files (.ino)", "ino"));
+
+		if (fileChoose.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 			File fileToSave = fileChoose.getSelectedFile();
-			if(!fileChoose.getSelectedFile().getAbsolutePath().endsWith(".ino"))
+			if (!fileChoose.getSelectedFile().getAbsolutePath()
+					.endsWith(".ino"))
 				fileToSave = new File(fileToSave.getAbsolutePath() + ".ino");
-			
-			save(fileToSave);			
+
+			save(fileToSave);
 		}
 	}
 
-	public void save(File f)
-	{
-		if(f.exists())
-		{
-			int choice = JOptionPane.showConfirmDialog(null, "Do you want to replace " + f.getName() +"?", "Save", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if(choice != JOptionPane.YES_OPTION)
+	public void save(File f) {
+		if (f.exists()) {
+			int choice = JOptionPane.showConfirmDialog(null,
+					"Do you want to replace " + f.getName() + "?", "Save",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (choice != JOptionPane.YES_OPTION)
 				return;
 		}
 
-		try ( BufferedWriter writer = new BufferedWriter(new FileWriter(f.getAbsolutePath())))
-		{					
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(
+				f.getAbsolutePath()))) {
 			writer.write(textArea.getText());
-		}
-		catch (FileNotFoundException e) 
-		{
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-
-	class OptionButtonListener implements ActionListener
-	{
+	class OptionButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			JButton but = (JButton)arg0.getSource();
-			if(but.getText() == "Open")
-				openFile();		
-			else if(but.getText() == "Save as")
+			JButton but = (JButton) arg0.getSource();
+			if (but.getText() == "Open")
+				openFile();
+			else if (but.getText() == "Save as")
 				saveAs();
-			else if(but.getText() == "Save")
-			{
-				if(openFile != null)
+			else if (but.getText() == "Save") {
+				if (openFile != null)
 					save(openFile);
 				else
 					saveAs();
 			}
-		}		
+		}
 	}
 
 }
