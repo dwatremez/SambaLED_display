@@ -127,6 +127,28 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 
 		return null;
 	}
+	
+	public void deleteItemAndEmptyLine(InstrumentItem source)
+	{			
+		InstrumentLine sourceLine;
+		InstrumentPanel panel;
+		if(source.getParent().getParent() != null)
+			if(source.getParent().getParent().getClass() == InstrumentLine.class)
+			{
+				sourceLine = (InstrumentLine)source.getParent().getParent();
+				//System.out.println("suppr: " + source + " from " + sourceLine.toString());
+				//System.out.println("origin: " + sourceLine.getInstruments().toString());
+				sourceLine.removeInstrument((InstrumentItem)source);
+				//System.out.println("remain: " + sourceLine.getInstruments().toString());
+				if(!sourceLine.getInstruments().isEmpty())
+					sourceLine.repaint();
+				else if((panel = findInstrumentPanel(sourceLine)) != null)
+				{
+					panel.removeLine(sourceLine);
+					panel.updateLinesDisplay();
+				}
+			}			
+	}
 
 
 	public class MouseGlassListener extends MouseAdapter{
@@ -369,7 +391,7 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 
 					// Delete source if Control not pressed
 					if(!event.isControlDown() && nbInstru != lineSelected.getInstruments().size())
-						deleteOldItem((InstrumentItem)source);
+						deleteItemAndEmptyLine((InstrumentItem)source);
 				}
 
 				// Move and Copy InstrumentItem in new Line in InstrumentPanel
@@ -385,7 +407,7 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 
 					// Delete source if Control not pressed
 					if(!event.isControlDown())
-						deleteOldItem((InstrumentItem)source);
+						deleteItemAndEmptyLine((InstrumentItem)source);
 				}
 			}
 		}
@@ -397,28 +419,6 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 			SwingUtilities.convertPointFromScreen(p, c);
 			//System.out.println(p);
 			return p;
-		}
-
-		public void deleteOldItem(InstrumentItem source)
-		{			
-			InstrumentLine sourceLine;
-			InstrumentPanel panel;
-			if(source.getParent().getParent() != null)
-				if(source.getParent().getParent().getClass() == InstrumentLine.class)
-				{
-					sourceLine = (InstrumentLine)source.getParent().getParent();
-					//System.out.println("suppr: " + source + " from " + sourceLine.toString());
-					//System.out.println("origin: " + sourceLine.getInstruments().toString());
-					sourceLine.removeInstrument((InstrumentItem)source);
-					//System.out.println("remain: " + sourceLine.getInstruments().toString());
-					if(!sourceLine.getInstruments().isEmpty())
-						sourceLine.repaint();
-					else if((panel = findInstrumentPanel(sourceLine)) != null)
-					{
-						panel.removeLine(sourceLine);
-						panel.updateLinesDisplay();
-					}
-				}			
 		}
 	}
 }

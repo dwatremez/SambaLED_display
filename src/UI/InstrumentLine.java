@@ -194,7 +194,8 @@ public class InstrumentLine extends JPanel{
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {	
-			removeInstrument(instrumentSelected);
+			instrumentSelected.deleteItemAndEmptyLine(instrumentSelected);
+			//removeInstrument(instrumentSelected);
 			repaint();	
 		}		
 	}

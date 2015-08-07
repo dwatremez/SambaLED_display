@@ -224,6 +224,7 @@ public class InstrumentPanel extends JPanel {
 			instrumentLinesPanel.add(lines.get(i), gbc);
 		}
 		this.revalidate();
+		this.repaint();
 	}
 
 	public void openFile()
