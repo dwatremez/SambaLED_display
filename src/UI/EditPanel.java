@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -55,6 +56,8 @@ public class EditPanel extends JPanel {
 		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
 		this.add(scrollPanel, BorderLayout.CENTER);
+		
+		scrollPanel.getVerticalScrollBar().setUnitIncrement(5);
 
 		optionButtons.setLayout(new GridBagLayout());
 		optionButtons.setBackground(backColor);
@@ -65,7 +68,7 @@ public class EditPanel extends JPanel {
 		configureOptionButton(saveButton, 1);
 		configureOptionButton(saveAsButton, 2);
 		configureOptionButton(launchButton, 3);
-
+		
 		this.add(optionButtons, BorderLayout.SOUTH);
 
 	}
