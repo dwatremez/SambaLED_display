@@ -2,7 +2,6 @@ package UI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,8 +24,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import UI.EditPanel.OptionButtonListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class InstrumentPanel extends JPanel {
 	
@@ -230,6 +228,7 @@ public class InstrumentPanel extends JPanel {
 	public void openFile()
 	{
 		JFileChooser fileChoose = new JFileChooser(new File("."));
+		fileChoose.setFileFilter(new FileNameExtensionFilter("Batucada files (.batuc)", "batuc"));
 		File file;
 
 		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
@@ -286,9 +285,17 @@ public class InstrumentPanel extends JPanel {
 			fileChoose = new JFileChooser(openFile);
 		else
 			fileChoose = new JFileChooser(new File("."));
+
+		fileChoose.setFileFilter(new FileNameExtensionFilter("Batucada files (.batuc)", "batuc"));
 		
 		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
-			save(fileChoose.getSelectedFile());
+		{
+			File fileToSave = fileChoose.getSelectedFile();
+			if(!fileChoose.getSelectedFile().getAbsolutePath().endsWith(".batuc"))
+				fileToSave = new File(fileToSave.getAbsolutePath() + ".batuc");
+			
+			save(fileToSave);			
+		}
 	}
 
 	public void save(File f)

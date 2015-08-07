@@ -22,6 +22,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class EditPanel extends JPanel {	
 
@@ -100,6 +101,7 @@ public class EditPanel extends JPanel {
 	public void openFile()
 	{
 		JFileChooser fileChoose = new JFileChooser(new File("."));
+		fileChoose.setFileFilter(new FileNameExtensionFilter("Arduino files (.ino)", "ino"));
 		File file;
 
 		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
@@ -140,9 +142,17 @@ public class EditPanel extends JPanel {
 			fileChoose = new JFileChooser(openFile);
 		else
 			fileChoose = new JFileChooser(new File("."));
+
+		fileChoose.setFileFilter(new FileNameExtensionFilter("Arduino files (.ino)", "ino"));
 		
 		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
-			save(fileChoose.getSelectedFile());
+		{
+			File fileToSave = fileChoose.getSelectedFile();
+			if(!fileChoose.getSelectedFile().getAbsolutePath().endsWith(".ino"))
+				fileToSave = new File(fileToSave.getAbsolutePath() + ".ino");
+			
+			save(fileToSave);			
+		}
 	}
 
 	public void save(File f)
