@@ -2,6 +2,7 @@ package UI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -64,7 +65,9 @@ public class InstrumentPanel extends JPanel {
 
 
 		instrumentLinesPanel.setBackground(backColor);
-		scrollPanel.setBorder(BorderFactory.createEmptyBorder());
+		scrollPanel.setBorder(null);
+		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
 
 		configureInstrumentExamples();
 		
@@ -94,6 +97,7 @@ public class InstrumentPanel extends JPanel {
 		instrumentExamples.add(new InstrumentItem("Balloon", 28));
 
 		instrumentItemPanel.setBackground(instrumentExamples.get(0).getBackground());
+		instrumentItemPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
 
 		for(int i = 0; i<instrumentExamples.size(); i++)
 		{
@@ -199,6 +203,16 @@ public class InstrumentPanel extends JPanel {
 	public ArrayList<InstrumentLine> getLines()
 	{
 		return lines;
+	}
+	
+	public JScrollPane getScrollPanel()
+	{
+		return this.scrollPanel;
+	}
+	
+	public int getScroll()
+	{
+		return this.scrollPanel.getVerticalScrollBar().getValue();
 	}
 
 	public JPanel getInstrumentLinesPanel()
