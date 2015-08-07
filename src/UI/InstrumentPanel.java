@@ -2,28 +2,48 @@ package UI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import UI.EditPanel.OptionButtonListener;
+
 public class InstrumentPanel extends JPanel {
+	
+	private File openFile;
 
 	private MyGlassPanel myGlass;
 
 	private JPanel instrumentLinesPanel = new JPanel();
 	private JScrollPane scrollPanel = new JScrollPane(instrumentLinesPanel);	
 	private ArrayList<InstrumentLine> lines = new ArrayList<>();
-	GridBagConstraints gbc = new GridBagConstraints();
+	private GridBagConstraints gbc = new GridBagConstraints();
+	
+	private JButton openButton = new JButton("Open");
+	private JButton saveButton = new JButton("Save");
 
 	private JPanel instrumentItemPanel = new JPanel();
 	private ArrayList<InstrumentItem> instrumentExamples = new ArrayList<>();
-
 
 	private static Color backColor = Color.decode("#EEEEEE");
 
@@ -80,12 +100,50 @@ public class InstrumentPanel extends JPanel {
 		for(int i = 0; i<instrumentExamples.size(); i++)
 		{
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.gridx = i;
+			gbc.gridx = i + 1;
 			gbc.gridy = 0;
+			gbc.gridheight = 2;
 			gbc.weightx = 1.0;
 			instrumentItemPanel.add(instrumentExamples.get(i), gbc);
 			instrumentExamples.get(i).setListenersForGlass(myGlass);
 		}	
+		
+		openButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				openFile();
+			}
+			
+		});
+		configureOptionButton(openButton, 0);
+		
+		saveButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				saveAs();
+			}
+			
+		});
+		configureOptionButton(saveButton, 1);		
+	}
+
+	private void configureOptionButton(JButton but, int pos)
+	{
+		but.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		but.setBorderPainted(false);
+		but.setFocusPainted(false);
+		but.setForeground(Color.WHITE);
+		but.setBackground(this.instrumentItemPanel.getBackground());
+		but.addMouseListener(new MouseFocusListener(but.getBackground()));
+		
+		gbc.gridx = 0;
+		gbc.gridy = pos;
+		gbc.gridheight = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weighty = 1.0;
+		instrumentItemPanel.add(but, gbc);		
 	}
 
 	public void addLine()
@@ -159,12 +217,108 @@ public class InstrumentPanel extends JPanel {
 			gbc.gridx = 0;
 			gbc.gridy = i;
 			gbc.weightx = 1.0;
+			gbc.weighty = 0.0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.insets = new Insets( 10, 0, 10, 0 );
 			lines.get(i).setNumber(lines.size() - i);
 			instrumentLinesPanel.add(lines.get(i), gbc);
 		}
 		this.revalidate();
+	}
+
+	public void openFile()
+	{
+		JFileChooser fileChoose = new JFileChooser(new File("."));
+		File file;
+
+		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+		{
+			file = fileChoose.getSelectedFile();
+
+			if(file.exists())
+			{
+				try ( BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath())))
+				{
+					openFile = file;
+					this.lines.clear();
+					String line;
+					while((line = reader.readLine()) != null)
+					{
+						InstrumentLine instrumentLine = new InstrumentLine();
+						int nbInstrument = Integer.parseUnsignedInt(String.valueOf(line.charAt(0)));
+						System.out.println(nbInstrument);
+						for(int i=0; i<nbInstrument; i++)
+						{
+							String name = line.substring(line.indexOf('[')+1,line.indexOf(','));
+							line = line.substring(line.indexOf(',')+1);
+							String type = line.substring(0,line.indexOf(','));
+							line = line.substring(line.indexOf(',')+1);
+							String shape = line.substring(0,line.indexOf(','));
+							line = line.substring(line.indexOf(',')+1);
+							int pixel = Integer.parseInt(line.substring(0,line.indexOf(']')));
+							System.out.println(name + " " + type + " " + shape + " " + pixel);
+							InstrumentItem item = new InstrumentItem(name, type, shape, pixel);
+							item.setListenersForGlass(myGlass);
+							instrumentLine.addInstrument(item);
+						}
+						this.addLine(instrumentLine, this.lines.size());
+					}
+					repaint();
+				}
+				catch (FileNotFoundException e) 
+				{
+					e.printStackTrace();
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public void saveAs()
+	{
+		JFileChooser fileChoose;
+		
+		if(this.openFile != null)
+			fileChoose = new JFileChooser(openFile);
+		else
+			fileChoose = new JFileChooser(new File("."));
+		
+		if (fileChoose.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+			save(fileChoose.getSelectedFile());
+	}
+
+	public void save(File f)
+	{
+		if(f.exists())
+		{
+			int choice = JOptionPane.showConfirmDialog(null, "Do you want to replace " + f.getName() +"?", "Save", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if(choice != JOptionPane.YES_OPTION)
+				return;
+		}
+
+		try ( BufferedWriter writer = new BufferedWriter(new FileWriter(f.getAbsolutePath())))
+		{					
+			for(int i=0; i<lines.size(); i++)
+			{
+				writer.write(String.valueOf(lines.get(i).getInstruments().size()));
+				for(int j=0; j<lines.get(i).getInstruments().size(); j++)
+				{
+					writer.write(lines.get(i).getInstruments().get(j).toString());
+				}
+				writer.write("\n");
+			}
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 }
 

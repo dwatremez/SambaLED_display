@@ -111,7 +111,6 @@ public class EditPanel extends JPanel {
 				openFile = file;
 				try ( BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath())))
 				{
-					textArea.setText("");
 					String line;
 					String all = "";
 					while((line = reader.readLine()) != null)
@@ -150,7 +149,7 @@ public class EditPanel extends JPanel {
 	{
 		if(f.exists())
 		{
-			int choice = JOptionPane.showConfirmDialog(null, "Do you want to replace " + openFile.getName() +"?", "Save", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int choice = JOptionPane.showConfirmDialog(null, "Do you want to replace " + f.getName() +"?", "Save", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if(choice != JOptionPane.YES_OPTION)
 				return;
 		}

@@ -357,8 +357,8 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 				// Move and Copy InstrumentItem in InstrumentLine
 				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
 				{
-					System.out.println(" --------------------- ");
-					System.out.println("copy: " + source + " in " + lineSelected.toString());
+					//System.out.println(" --------------------- ");
+					//System.out.println("copy: " + source + " in " + lineSelected.toString());
 					InstrumentItem clone = (InstrumentItem)((InstrumentItem)source).clone();
 					clone.resetListenersForGlass();
 
@@ -407,10 +407,10 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 				if(source.getParent().getParent().getClass() == InstrumentLine.class)
 				{
 					sourceLine = (InstrumentLine)source.getParent().getParent();
-					System.out.println("suppr: " + source + " from " + sourceLine.toString());
-					System.out.println("origin: " + sourceLine.getInstruments().toString());
+					//System.out.println("suppr: " + source + " from " + sourceLine.toString());
+					//System.out.println("origin: " + sourceLine.getInstruments().toString());
 					sourceLine.removeInstrument((InstrumentItem)source);
-					System.out.println("remain: " + sourceLine.getInstruments().toString());
+					//System.out.println("remain: " + sourceLine.getInstruments().toString());
 					if(!sourceLine.getInstruments().isEmpty())
 						sourceLine.repaint();
 					else if((panel = findInstrumentPanel(sourceLine)) != null)

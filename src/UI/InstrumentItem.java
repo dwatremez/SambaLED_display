@@ -42,7 +42,7 @@ public class InstrumentItem extends DragDropFocusJPanel {
 	
 	public String toString()
 	{
-		return this.name + " " + this.type + " " + this.pixelNb + " pixels";
+		return "[" + this.name + "," + this.type + "," + this.shape + "," + this.pixelNb + "]";
 	}
 
 	private void init()
