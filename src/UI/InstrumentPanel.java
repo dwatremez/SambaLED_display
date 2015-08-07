@@ -246,7 +246,7 @@ public class InstrumentPanel extends JPanel {
 					{
 						InstrumentLine instrumentLine = new InstrumentLine();
 						int nbInstrument = Integer.parseUnsignedInt(String.valueOf(line.charAt(0)));
-						System.out.println(nbInstrument);
+						//System.out.println(nbInstrument);
 						for(int i=0; i<nbInstrument; i++)
 						{
 							String name = line.substring(line.indexOf('[')+1,line.indexOf(','));
@@ -256,7 +256,7 @@ public class InstrumentPanel extends JPanel {
 							String shape = line.substring(0,line.indexOf(','));
 							line = line.substring(line.indexOf(',')+1);
 							int pixel = Integer.parseInt(line.substring(0,line.indexOf(']')));
-							System.out.println(name + " " + type + " " + shape + " " + pixel);
+							//System.out.println(name + " " + type + " " + shape + " " + pixel);
 							InstrumentItem item = new InstrumentItem(name, type, shape, pixel);
 							item.setListenersForGlass(myGlass);
 							instrumentLine.addInstrument(item);

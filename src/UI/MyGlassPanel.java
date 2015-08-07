@@ -41,6 +41,9 @@ public class MyGlassPanel extends JPanel{
 
 	public void setBadFocus()
 	{
+		if(img == null)
+			return;
+		
 		this.focusRect = new Point[2];
 		this.focusRect[0] = new Point((int)(Location.getX() - (img.getWidth(this)  / 2)),(int)(Location.getY() - (img.getHeight(this) / 2)));
 		this.focusRect[1] = new Point((int)img.getWidth(this), (int)img.getHeight(this));

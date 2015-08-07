@@ -203,7 +203,6 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 			myGlass.setImage(null);
 			myGlass.setFocus(null, null);
 			myGlass.setVisible(false);
-			image = null;
 		}
 
 		public void mouseDragged(MouseEvent event) 
@@ -218,7 +217,7 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 			myGlass.setFocus(null, null);
 
 			// Draw Focus
-			if(source.getClass() == InstrumentItem.class && findComponentUnderMouse() != null && image != null)
+			if(source.getClass() == InstrumentItem.class && findComponentUnderMouse() != null)
 			{
 				// Draw focus on Line
 				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
