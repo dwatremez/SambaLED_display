@@ -19,8 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-public class InstrumentLine extends JPanel {
-
+public class InstrumentLine extends JPanel{	
+	
 	private Dimension dim = new Dimension();
 
 	private ArrayList<InstrumentItem> instruments = new ArrayList<>();
@@ -29,86 +29,99 @@ public class InstrumentLine extends JPanel {
 
 	private JLabel lineLabel = new JLabel("New Line");
 
-	private JPopupMenu instrumentPopMenu = new JPopupMenu();
+	private JPopupMenu instrumentPopMenu  = new JPopupMenu();
 
-	private JMenuItem deleteInstrumentMenuItem = new JMenuItem(
-			"Delete instrument");
+	private JMenuItem deleteInstrumentMenuItem = new JMenuItem("Delete instrument");
 	private JMenuItem renameInstrumentMenuItem = new JMenuItem("Rename player");
-	private JMenuItem editInstrumentMenuItem = new JMenuItem(
-			"Edit instrument parameters");
+	private JMenuItem editInstrumentMenuItem = new JMenuItem("Edit instrument parameters");
 
 	private static Color backColor = Color.decode("#90A4AE");
 
 	private InstrumentItem instrumentSelected;
 
-	public InstrumentLine() {
+
+	public InstrumentLine()
+	{	
 		initObject();
 	}
 
-	public InstrumentLine(int i) {
+
+	public InstrumentLine(int i)
+	{
 		initObject();
 		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		lineLabel.setText(String.valueOf(i));
 	}
-
-	public String toString() {
+	
+	public String toString()
+	{
 		return "Line: " + lineLabel.getText();
 	}
 
-	private void initObject() {
-		this.setBackground(backColor);
+	private void initObject()
+	{
+		this.setBackground(backColor);		
 		this.setLayout(new BorderLayout());
 		dim.height = 50;
 		this.setMinimumSize(dim);
 		this.add(lineLabel, BorderLayout.WEST);
 
 		instrumentsPanel.setLayout(new GridBagLayout());
-		this.add(instrumentsPanel, BorderLayout.CENTER);
+		this.add(instrumentsPanel, BorderLayout.CENTER);		
 
-		deleteInstrumentMenuItem
-				.addActionListener(new DeleteInstrumentListener());
-		renameInstrumentMenuItem
-				.addActionListener(new RenameInstrumentListener());
+		deleteInstrumentMenuItem.addActionListener(new DeleteInstrumentListener());
+		renameInstrumentMenuItem.addActionListener(new RenameInstrumentListener());
 		editInstrumentMenuItem.addActionListener(new EditInstrumentListener());
+		
 
 		setEveryComponentColor(backColor);
-
+		
 	}
-
-	public void setNumber(int i) {
+	
+	public void setNumber(int i)
+	{
 		lineLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));
-		lineLabel.setText(String.valueOf(i));
+		lineLabel.setText(String.valueOf(i));		
 	}
-
-	private void setEveryComponentColor(Color c) {
+	
+	private void setEveryComponentColor(Color c)
+	{
 		for (int i = 0; i < this.getComponentCount(); i++) {
 			this.getComponent(i).setBackground(c);
 		}
 	}
-
-	public void repaint() {
+	
+	
+	public void repaint()
+	{
 		setEveryComponentColor(this.getBackground());
 		super.repaint();
 	}
 
-	public void addInstrument(InstrumentItem iI, Point p) {
-		if (p != null && !instruments.isEmpty()) {
+	public void addInstrument(InstrumentItem iI, Point p)
+	{
+		if(p!=null && !instruments.isEmpty())
+		{
 			int pos = 0;
-			while (true) {
-				if (p.getX() < instrumentsPanel.getSize().getWidth()
-						/ (2 * instruments.size()) * (1 + 2 * pos)) {
-					if (pos != 0) {
-						if (p.getX() > instruments.get(pos - 1).getX()
-								+ instruments.get(pos - 1).getWidth())
+			while(true)
+			{
+				if(p.getX() < instrumentsPanel.getSize().getWidth() / (2 * instruments.size()) * (1 + 2*pos))
+				{
+					if(pos != 0)
+					{
+						if(p.getX() > instruments.get(pos-1).getX() + instruments.get(pos-1).getWidth())
 							instruments.add(pos, iI);
-					} else
-						instruments.add(pos, iI);
-
+					}
+					else
+						instruments.add(pos, iI);			
+							
 					break;
-				} else
-					pos++;
-			}
-		} else
+				}
+				else
+					pos++;					
+			}								
+		}
+		else
 			instruments.add(iI);
 
 		this.mouseMenu(iI);
@@ -116,19 +129,23 @@ public class InstrumentLine extends JPanel {
 		this.repaint();
 	}
 
-	public void addInstrument(InstrumentItem iI) {
+	public void addInstrument(InstrumentItem iI)
+	{
 		addInstrument(iI, null);
 	}
-
-	public void removeInstrument(InstrumentItem iI) {
+	
+	public void removeInstrument(InstrumentItem iI)
+	{
 		this.instruments.remove(iI);
 		this.updateDisplay();
 	}
 
-	private void mouseMenu(InstrumentItem iI) {
-		iI.addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
+	private void mouseMenu(InstrumentItem iI)
+	{
+		iI.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e){
+				if(e.isPopupTrigger())
+				{
 					instrumentSelected = iI;
 					instrumentPopMenu.add(deleteInstrumentMenuItem);
 					instrumentPopMenu.add(renameInstrumentMenuItem);
@@ -140,11 +157,14 @@ public class InstrumentLine extends JPanel {
 		});
 
 	}
-
-	public void updateDisplay() {
+	
+	
+	public void updateDisplay()
+	{	
 		instrumentsPanel.removeAll();
-		for (int i = 0; i < instruments.size(); i++) {
-			// gbc.fill = GridBagConstraints.BOTH;
+		for(int i =0; i<instruments.size(); i++)
+		{
+			//gbc.fill = GridBagConstraints.BOTH;
 			gbc.gridx = i;
 			gbc.gridy = 0;
 			gbc.weightx = 1.0;
@@ -154,53 +174,58 @@ public class InstrumentLine extends JPanel {
 		this.revalidate();
 		this.repaint();
 	}
-
-	public ArrayList<InstrumentItem> getInstruments() {
+	
+	public ArrayList<InstrumentItem> getInstruments()
+	{
 		return instruments;
 	}
-
-	public Color getBackColor() {
+	
+	public  Color getBackColor()
+	{
 		return this.backColor;
 	}
 
-	public JLabel getLabel() {
+	public JLabel getLabel()
+	{
 		return this.lineLabel;
 	}
 
-	class DeleteInstrumentListener implements ActionListener {
+	class DeleteInstrumentListener implements ActionListener
+	{
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent arg0) {	
 			instrumentSelected.deleteItemAndEmptyLine(instrumentSelected);
-			// removeInstrument(instrumentSelected);
-			repaint();
-		}
+			//removeInstrument(instrumentSelected);
+			repaint();	
+		}		
 	}
 
-	class RenameInstrumentListener implements ActionListener {
+	class RenameInstrumentListener implements ActionListener
+	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			Object o = JOptionPane.showInputDialog(null, "Name",
-					"Musician's name", JOptionPane.QUESTION_MESSAGE, null,
-					null, instrumentSelected.getName());
-			if (o != null)
+			Object o = JOptionPane.showInputDialog(null, "Name", "Musician's name", JOptionPane.QUESTION_MESSAGE, null, null, instrumentSelected.getName());
+			if(o != null)
 				instrumentSelected.setName(o.toString());
 			repaint();
-		}
-	}
+		}		
+	}	
 
-	class EditInstrumentListener implements ActionListener {
+	class EditInstrumentListener implements ActionListener
+	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-
-			InstrumentDialog iDialog = new InstrumentDialog(null,
-					"Edit instrument parameters", true, instrumentSelected);
+						
+			InstrumentDialog iDialog = new InstrumentDialog(null, "Edit instrument parameters", true, instrumentSelected);
 			InstrumentItem i = iDialog.showZDialog();
-			if (i != null) {
-				instrumentSelected.setParameters(i.getName(), i.getType(),
-						i.getShape(), i.getPixelNb());
+			if(i != null)
+			{
+				instrumentSelected.setParameters(i.getName(), i.getType(), i.getShape(), i.getPixelNb());
 				repaint();
 			}
-		}
-	}
+		}		
+	}	
+
+
 
 }
