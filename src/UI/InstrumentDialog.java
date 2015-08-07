@@ -17,7 +17,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -72,8 +71,9 @@ public class InstrumentDialog extends JDialog {
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-
-
+		
+		this.getRootPane().setDefaultButton(okButton);
+				
 		optionPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 		optionPanel.setLayout(new GridBagLayout());
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -185,7 +185,7 @@ public class InstrumentDialog extends JDialog {
 			}
 		});
 		this.add(controlPanel, BorderLayout.SOUTH);
-
+		
 		loaded = true;
 	}
 
