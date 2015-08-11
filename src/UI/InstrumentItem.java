@@ -48,6 +48,7 @@ public class InstrumentItem extends DragDropFocusJPanel {
 	private void init()
 	{
 		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));
+		this.setMinimumSize(new Dimension(size,(int)(1.2*size)));
 	}
 
 

@@ -1,10 +1,7 @@
 package UI;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -12,9 +9,10 @@ public class MainWindow extends JFrame {
 
 	private MyGlassPanel myGlass = new MyGlassPanel();
 
-	private JPanel mainContainer = new JPanel();
 	private InstrumentPanel instPanel = new InstrumentPanel(myGlass);
-	private SidePanel sidePanel = new SidePanel();
+	private SidePanel sidePanel = new SidePanel();	
+
+	private JSplitPane mainContainer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidePanel, instPanel);
 
 	public MainWindow() {
 		this.setTitle("SambaLED Display");
@@ -32,16 +30,12 @@ public class MainWindow extends JFrame {
 			e.printStackTrace();
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
-		}
-
-		mainContainer.setLayout(new BorderLayout());
-
-		mainContainer.add(instPanel, BorderLayout.CENTER);
-		mainContainer.add(sidePanel, BorderLayout.WEST);
-
-		// instPanel.addLine();
-
-		setMinimumSize(new Dimension(1400, 500));
+		}		
+		
+		mainContainer.setDividerSize(1);
+		mainContainer.setContinuousLayout(true);
+		
+		mainContainer.setResizeWeight(0.5);
 
 		this.setContentPane(mainContainer);
 		this.setGlassPane(myGlass);
