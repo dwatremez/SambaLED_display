@@ -56,6 +56,7 @@ public class EditPanel extends JPanel {
 		textArea.setBackground(Color.DARK_GRAY);
 		textArea.setForeground(Color.LIGHT_GRAY);
 		textArea.setCaretColor(Color.LIGHT_GRAY);
+		textArea.setSelectionColor(Color.decode("#6D4C41"));
 		textArea.setCurrentLineHighlightColor(textArea.getBackground().brighter());
 		textArea.setMarginLineColor(Color.DARK_GRAY);
 		textArea.setLineWrap(true);
@@ -80,7 +81,7 @@ public class EditPanel extends JPanel {
 		scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
 		this.add(scrollPanel, BorderLayout.CENTER);
 
-		scrollPanel.getVerticalScrollBar().setUnitIncrement(5);
+		scrollPanel.getVerticalScrollBar().setUnitIncrement(10);
 
 		optionButtons.setLayout(new GridBagLayout());
 		optionButtons.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,Color.white));
