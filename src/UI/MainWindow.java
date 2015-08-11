@@ -37,7 +37,7 @@ public class MainWindow extends JFrame {
 		mainContainer.setLayout(new BorderLayout());
 
 		mainContainer.add(instPanel, BorderLayout.CENTER);
-		mainContainer.add(sidePanel, BorderLayout.EAST);
+		mainContainer.add(sidePanel, BorderLayout.WEST);
 
 		// instPanel.addLine();
 

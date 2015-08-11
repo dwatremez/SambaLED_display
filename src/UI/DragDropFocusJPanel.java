@@ -221,9 +221,11 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 			if(source.getClass() == InstrumentItem.class && findComponentUnderMouse() != null)
 			{
 				Point p = (Point)pg.clone();
+				SwingUtilities.convertPointToScreen(p, myGlass);
 				// Draw focus on Line
 				if((lineSelected = findInstrumentLine(findComponentUnderMouse())) != null)
 				{
+					SwingUtilities.convertPointFromScreen(p, lineSelected);
 					myGlass.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 
 					// Print copy if CTRL pressed
@@ -264,9 +266,9 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 							Point p0 = new Point();
 							Point p1 = new Point();
 							if(position == 0)
-								p0.setLocation(0, lineSelected.getY());
+								p0.setLocation(0, 0);
 							else
-								p0.setLocation(lineSelected.getInstruments().get(position-1).getX() + lineSelected.getInstruments().get(position-1).getWidth(), lineSelected.getY());
+								p0.setLocation(lineSelected.getInstruments().get(position-1).getX() + lineSelected.getInstruments().get(position-1).getWidth(), 0);
 
 							if(position == lineSelected.getInstruments().size())
 								p1.setLocation(lineSelected.getWidth(), lineSelected.getHeight());							
@@ -280,6 +282,11 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 							if(p0.getY() + p1.getY() > findInstrumentPanel(findComponentUnderMouse()).getScrollPanel().getHeight())
 								p1.setLocation(p1.getX(), findInstrumentPanel(findComponentUnderMouse()).getScrollPanel().getHeight() - p0.getY());
 
+							SwingUtilities.convertPointToScreen(p0, lineSelected);
+							SwingUtilities.convertPointFromScreen(p0, myGlass);
+
+							//System.out.println(p0.toString() + p1.toString());
+
 							Point[] focusP = {p0, p1};
 							myGlass.setFocus(focusP, analogColor(lineSelected.getBackColor(),2));	
 						}
@@ -289,6 +296,7 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 				// Draw focus on Panel
 				else if((panelSelected =  findInstrumentPanel(findComponentUnderMouse()))!= null)
 				{
+					SwingUtilities.convertPointFromScreen(p, panelSelected);
 					//System.out.println("Dragged on Panel: ");
 					if(!panelSelected.getLines().isEmpty())
 					{
@@ -328,6 +336,9 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 
 							if(p0.getY() + p1.getY() > panelSelected.getScrollPanel().getHeight())
 								p1.setLocation(p1.getX(), panelSelected.getScrollPanel().getHeight() - p0.getY());
+							
+							SwingUtilities.convertPointToScreen(p0, panelSelected);
+							SwingUtilities.convertPointFromScreen(p0, myGlass);
 
 							Point[] focusP = {p0, p1};
 							myGlass.setFocus(focusP, analogColor(panelSelected.getBackColor()));		
@@ -344,6 +355,9 @@ public class DragDropFocusJPanel extends JPanel implements Cloneable{
 							Point p1 = new Point();
 							p0.setLocation(0, 0);
 							p1.setLocation(panelSelected.getScrollPanel().getWidth(), panelSelected.getScrollPanel().getHeight());
+
+							SwingUtilities.convertPointToScreen(p0, panelSelected);
+							SwingUtilities.convertPointFromScreen(p0, myGlass);
 
 							Point[] focusP = {p0, p1};
 							myGlass.setFocus(focusP, analogColor(panelSelected.getBackColor()));
