@@ -39,7 +39,7 @@ public class InstrumentItem extends DragDropFocusJPanel {
 		init();
 		setParameters(name, type, shape, pixelNb);
 	}
-	
+
 	public String toString()
 	{
 		return "[" + this.name + "," + this.type + "," + this.shape + "," + this.pixelNb + "]";
@@ -126,21 +126,71 @@ public class InstrumentItem extends DragDropFocusJPanel {
 		switch(shape)
 		{
 		case "Circle":
-			g.fillOval((int)(this.getWidth()/2.0 - size/4.0),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/2.0),(int)(size/2.0));
+			if(this.pixelNb == 0 || this.pixelColor.isEmpty())
+			{
+				g.fillOval((int)(this.getWidth()/2.0 - size/4.0),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/2.0),(int)(size/2.0));
+				g.fillOval((int)(this.getWidth()/2.0 - size/8.0),(int)(this.getHeight()/2.0 - size/8.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/4.0));
+				break;
+			}
+			for(int i=0; i<this.pixelNb; i++)
+			{
+				//g.setColor(new Color(i/2 * 255/this.pixelNb, i * 255/this.pixelNb, i/4*3 *255/this.pixelNb));
+				g.setColor(this.pixelColor.get(i));
+				g.fillArc((int)(this.getWidth()/2.0 - size/4.0),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/2.0),(int)(size/2.0), 
+						i * 360/this.pixelNb + 90, 360/this.pixelNb + 2);				
+			}
 			break;
 		case "Bar":
-			g.fillRect((int)(this.getWidth()/2.0 - size/3.0),(int)(this.getHeight()/2.0 - size/8.0) + (nameFont.getSize() + typeFont.getSize())/2, (int)(2.0/3.0*size),(int)(size/4.0));
+			if(this.pixelNb == 0 || this.pixelColor.isEmpty())
+			{
+				g.fillRect((int)(this.getWidth()/2.0 - size/3.0),(int)(this.getHeight()/2.0 - size/8.0) + (nameFont.getSize() + typeFont.getSize())/2, (int)(2.0/3.0*size),(int)(size/4.0));
+				break;
+			}
+			for(int i=0; i<this.pixelNb; i++)
+			{
+				//g.setColor(new Color(i/2 * 255/this.pixelNb, i * 255/this.pixelNb, i/4*3 *255/this.pixelNb));
+				g.setColor(this.pixelColor.get(i));
+				g.fillRect((int)(this.getWidth()/2.0 - size/3.0) + i * (int)(2.0/3.0*size) / this.pixelNb,(int)(this.getHeight()/2.0 - size/8.0) + (nameFont.getSize() + typeFont.getSize())/2,
+						(int)(2.0/3.0*size) / this.pixelNb + 2,(int)(size/4.0));				
+			}
 			break;	
 		case "Triple Bar":
-			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) - size/3.0), (int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
-			g.fillRect((int)((this.getWidth()/2.0 - size/8.0)),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
-			g.fillRect((int)((this.getWidth()/2.0 - size/8.0) + size /3.0),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
+			if(this.pixelNb == 0 || this.pixelColor.isEmpty())
+			{
+				g.fillRect((int)((this.getWidth()/2.0 - size/8.0) - size/3.0), (int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
+				g.fillRect((int)((this.getWidth()/2.0 - size/8.0)),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
+				g.fillRect((int)((this.getWidth()/2.0 - size/8.0) + size /3.0),(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2,(int)(size/4.0),(int)(size/2.0));
+				break;
+			}
+			for(int i=0; i<this.pixelNb; i++)
+			{
+				//g.setColor(new Color(i/2 * 255/this.pixelNb, i * 255/this.pixelNb, i/4*3 *255/this.pixelNb));
+				g.setColor(this.pixelColor.get(i));	
+
+				if(i < this.pixelNb/3.0)
+				{
+					g.fillRect((int)((this.getWidth()/2.0 - size/8.0) + size /3.0),
+							(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2 + (int)(size/2.0)  * 3*i / this.pixelNb,
+							(int)(size/4.0),
+							(int)(size/2.0)  * 3 / this.pixelNb + 2);	}
+
+				else if(i <  this.pixelNb * 2.0/3.0)
+					g.fillRect((int)((this.getWidth()/2.0 - size/8.0)),
+							(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2 +  + (int)(size/2.0)  * 3*(i -  (int)Math.ceil(this.pixelNb/3.0)) / this.pixelNb,
+							(int)(size/4.0),
+							(int)(size/2.0)  * 3 / this.pixelNb + 2);	
+
+				else
+					g.fillRect((int)((this.getWidth()/2.0 - size/8.0) - size/3.0), 
+							(int)(this.getHeight()/2.0 - size/4.0) + (nameFont.getSize() + typeFont.getSize())/2 +  + (int)(size/2.0)  * 3*(i -  (int)Math.ceil(this.pixelNb *2.0/3.0)) / this.pixelNb,
+							(int)(size/4.0),
+							(int)(size/2.0) * 3 / this.pixelNb + 2);
+			}
 			break;					
 		default:
 
 		}
 	}
-
 
 	public String getName() {
 		return name;
