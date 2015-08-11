@@ -230,4 +230,14 @@ public class InstrumentItem extends DragDropFocusJPanel {
 	public void setShape(String shape) {
 		this.shape = shape;
 	}
+
+
+	public ArrayList<Color> getPixelColor() {
+		return pixelColor;
+	}
+
+
+	public void setPixelColor(ArrayList<Color> pixelColor) {
+		this.pixelColor = pixelColor;
+	}
 }
