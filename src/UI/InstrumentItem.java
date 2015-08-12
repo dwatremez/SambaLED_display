@@ -6,7 +6,12 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+import Engine.InstrumentEngine;
+
 public class InstrumentItem extends DragDropFocusJPanel {
+	
+	private InstrumentEngine engine = new InstrumentEngine();
+	private Thread t = new Thread(engine);
 
 	private String name = "Luc";
 	private String type = "Caixa";
@@ -49,6 +54,7 @@ public class InstrumentItem extends DragDropFocusJPanel {
 	{
 		this.setPreferredSize(new Dimension(size,(int)(1.2*size)));
 		this.setMinimumSize(new Dimension(size,(int)(1.2*size)));
+		this.engine.setup();
 	}
 
 

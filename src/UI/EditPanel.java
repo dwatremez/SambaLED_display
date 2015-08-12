@@ -190,6 +190,11 @@ public class EditPanel extends JPanel {
 			e.printStackTrace();
 		}
 	}
+	
+	public String getText()
+	{
+		return this.textArea.getText();
+	}
 
 	class OptionButtonListener implements ActionListener 
 	{
